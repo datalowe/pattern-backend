@@ -1,0 +1,3 @@
+[submodule "pattern-db"]
+	path = pattern-db
+	url = https://github.com/joki20/pattern-db

@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Models\Scooter;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +16,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::get('scooters', function() {
+    // TODO: This (and other routes) should be wrapped
+    // in middleware.
+    return Scooter::all();
 });

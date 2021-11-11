@@ -30,3 +30,6 @@ To force image rebuilds (to make app updates be reflected in Docker containers),
 ```bash
 docker-compose build
 ```
+
+## References
+Much of this project is likely to be inspired by [this guide on building REST API's with Laravel] by André Castelo.

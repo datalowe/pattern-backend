@@ -5,25 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Scooter extends Model
+class Adm extends Model
 {
-    protected $table = 'scooter'; // table name
+    protected $table = 'adm'; // table name
     protected $primaryKey = 'id';
     public $timestamps = false; // stops laravel from adding fields created_at and updated_at
     protected $addHttpCookie = true; // send csrf token for post requests in order to work with post/put
 
     // mass assignable properties - unsure what means
-    // columns in table 'scooter'
+    // columns in table 'adm'
     protected $fillable = [
-        'customer_id',
-        'city_id',
-        'station_id',
-        'rented',
-        'lat_pos',
-        'lon_pos',
-        'maintenance_mode',
-        'active',
-        'speed_kph',
-        'battery_level'
+        'username',
+        'password'
     ];
 }

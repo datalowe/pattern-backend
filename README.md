@@ -5,6 +5,20 @@ This repository mainly consists of code for building a Docker container running 
 
 Note that, in order to include the submodule's code, when cloning the repository you need to run `git clone --recurse-submodules https://github.com/datalowe/pattern-backend`.
 
+## Developer mode
+During development, it's handy to have a Docker container with the database running in the background, but editing Laravel code and immediately checking updates on the host computer.
+
+1. Follow the instructions in 'pattern-db/README.md' for creating and getting a MySQL Docker container up and running, available/exposed on the host computer on port 6666 (the instructions there ensure that port 6666 is used).
+2. `cd` to the 'laravel' subdirectory
+3. Run `composer install`.
+   - This will load composer repositories, then import packages and create the 'vendor' directory with autoload script
+4. Copy and rename the file 'laravel/.env.example' to 'laravel/.env'. Note that the 'DB_*' environment variables in 'laravel/.env.example' configure how Laravel talks to the database. The preassigned values are such that they should work with the Docker container started in step 1.
+5. (still in the 'laravel' subdirectory) Run `php artisan serve` to start the development server.
+6. Connect to localhost:8000 through your browser and check that the server works.
+
+You can find additional developer notes in 'developer_notes.md' here in the root directory.
+
+
 ## Build and run with Docker
 ```bash
 cd /path/to/this/dir

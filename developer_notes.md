@@ -11,7 +11,7 @@ This will load composer repositories, then import packages and create the vendor
 ## 2. Copy and rename file .env.example to .env
 Settings here will overwrite config/database.php
 
-- mysql is set at port 3306
+- mysql is set at port 6666 (if running MySQL directly on host computer rather than in Docker container, DB_PORT needs to be changed to 3306)
 - database name is 'sctr'
 - username for this db is 'root'
 - password for this db is 'fstr_hrdr_sctr'

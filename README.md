@@ -28,7 +28,7 @@ docker-compose up
 ```
 Note that this command runs in 'attached' mode, meaning the terminal will show output logs from both the database and the Laravel/backend containers. This is useful to keep track of when both containers (especially the database) have finished loading and you should be able to connect. If you want to run in detached mode instead, use `docker-compose -d up`.
 
-To interact with the Laravel application, go to (in your browser, on the host computer) e.g. `localhost:8080` or `localhost:8080/scooters`.
+To interact with the Laravel application, go to (in your browser, on the host computer) e.g. `localhost:8080` or `localhost:8080/api/scooters`.
 
 To bring containers down and delete them, run (after hitting 'ctrl+C'/'Cmd+C' if you ran in 'attached mode')
 ```bash

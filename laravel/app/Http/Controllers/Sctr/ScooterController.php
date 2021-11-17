@@ -15,11 +15,20 @@ class ScooterController extends Controller
         $scooter = Scooter::find($id);
 
         // update specific column in row if body contains key-value
-        $body->customer_id = null ? $scooter->customer_id = null : null; // if value is set to null
-        isset($body->customer_id) ? $scooter->customer_id = $body->customer_id : null; // assign $body->customer_id
+        if ($body->customer_id != null && $body->customer_id == 0) {
+            $scooter->customer_id = null;
+        } elseif ($body->customer_id != null) {
+            $scooter->customer_id = $body->customer_id;
+        }; // assign $body->customer_id
+
         isset($body->city_id) ? $scooter->city_id = $body->city_id : null;
-        isset($body->station_id) ? $scooter->station_id = $body->station_id : null;
-        $body->station_id = null ? $scooter->station_id = null : null; // if value is set to null
+        // update specific column in row if body contains key-value
+        if ($body->station_id != null && $body->station_id == 0) {
+            $scooter->station_id = null;
+        } elseif ($body->station_id != null) {
+            $scooter->station_id = $body->station_id;
+        }; // assign $body->station_id
+
         isset($body->lat_pos) ? $scooter->lat_pos = $body->lat_pos : null;
         isset($body->lon_pos) ? $scooter->lon_pos = $body->lon_pos : null;
         isset($body->active) ? $scooter->active = $body->active : null;

@@ -6,7 +6,18 @@ jobs:
   build:
     docker:
       - image: circleci/php:8.0.11-node-browsers
-
+        environment: 
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: sctr
+          DB_USERNAME: root
+          DB_PASSWORD: fstr_hrdr_sctr
+      - image: mysql:latest
+        environment:
+          MYSQL_DATABASE: sctr
+          MYSQL_ROOT_PASSWORD: fstr_hrdr_sctr
+          DB_PORT: 3306
     working_directory: ~/pattern-backend/laravel
     steps:
       - checkout:
@@ -38,9 +49,8 @@ jobs:
             mv .env.testing .env
             php artisan key:generate
       - run:
-          name: "Create database and run migration"
+          name: "Run migration against MySQL database"
           command: |
-            touch database/database.sqlite
             php artisan migrate --env=testing
       - run:
           name: "Run Tests"

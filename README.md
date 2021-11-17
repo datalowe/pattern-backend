@@ -45,5 +45,16 @@ To force image rebuilds (to make app updates be reflected in Docker containers),
 docker-compose build
 ```
 
+## Updating database migration files
+Note that the pattern-db submodule is the single source of truth for what the database should 'really' be like, and as mentioned above, it's created and spun up separately from Laravel. However, it's useful to have Laravel database migration files for enabling database setup when testing. To this end, the [Laravel Migrations Generator](https://github.com/kitloong/laravel-migrations-generator) package is used to generate migrations files _based on the already existing MySQL (pattern-db) database_.
+
+If pattern-db is updated in a manner which makes the migrations files outdated, follow these steps to update them:
+
+1. Delete all non-default Laravel migrations files (ie files whose names start with a later date than '2019_12_14') from 'laravel/database/migrations'.
+2. `cd` into the 'laravel' directory.
+3. Run `php artisan migrate:generate`.
+
+You should now see that new files have been generated in 'laravel/database/migrations'.
+
 ## References
-Much of this project is likely to be inspired by [this guide on building REST API's with Laravel] by André Castelo.
+Much of this project is likely to be inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo.

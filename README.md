@@ -45,7 +45,7 @@ To force image rebuilds (to make app updates be reflected in Docker containers),
 docker-compose build
 ```
 
-## Updating database migration files
+## Update database migration files
 Note that the pattern-db submodule is the single source of truth for what the database should 'really' be like, and as mentioned above, it's created and spun up separately from Laravel. However, it's useful to have Laravel database migration files for enabling database setup when testing. To this end, the [Laravel Migrations Generator](https://github.com/kitloong/laravel-migrations-generator) package is used to generate migrations files _based on the already existing MySQL (pattern-db) database_.
 
 If pattern-db is updated in a manner which makes the migrations files outdated, follow these steps to update them:

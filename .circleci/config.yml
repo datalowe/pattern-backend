@@ -46,12 +46,12 @@ jobs:
       - run:
           name: "Create Environment file and generate app key"
           command: |
-            mv .env.testing .env
+            mv .env.circleci .env
             php artisan key:generate
       - run:
           name: "Run migration against MySQL database"
           command: |
-            php artisan migrate --env=testing
+            php artisan migrate
       - run:
           name: "Run Tests"
           command: ./vendor/bin/phpunit

@@ -17,12 +17,11 @@ class Scooter extends Model
         'customer_id',
         'city_id',
         'station_id',
-        'rented',
         'lat_pos',
         'lon_pos',
-        'maintenance_mode',
         'active',
         'speed_kph',
-        'battery_level'
+        'battery_level',
+        'status'
     ];
 }

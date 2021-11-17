@@ -19,7 +19,7 @@ class StationController extends Controller
         isset($body->lat_center) ? $station->lat_center = $body->lat_center : null;
         isset($body->lon_center) ? $station->lon_center = $body->lon_center : null;
         isset($body->radius) ? $station->radius = $body->radius : null;
-        isset($body->charge) ? $station->charge = $body->charge : null;
+        isset($body->type) ? $station->type = $body->type : null;
 
         // update station
         $station->save();

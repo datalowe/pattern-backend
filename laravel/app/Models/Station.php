@@ -19,6 +19,6 @@ class Station extends Model
         'lat_center',
         'lon_center',
         'radius',
-        'charge'
+        'type'
     ];
 }

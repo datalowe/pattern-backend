@@ -27,6 +27,7 @@ jobs:
           command: |
             sudo apt update
             sudo docker-php-ext-install zip
+            suo apt install php8.0-mysql
       # Download and cache dependencies
       - restore_cache:
           keys:

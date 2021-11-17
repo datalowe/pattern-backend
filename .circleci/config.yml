@@ -23,12 +23,21 @@ jobs:
       - checkout:
           path: ~/pattern-backend
       - run:
+          name: Install MySQL client in case this helps with PHP drivers
+          command: |
+            sudo apt-get update
+            sudo apt-get install mysql-client
+      - run:
           name: Install PHP exts
           command: |
             sudo docker-php-ext-install zip
             sudo docker-php-ext-configure intl
             sudo docker-php-ext-install intl
             sudo docker-php-ext-install pdo_mysql
+      - run:
+          name: Fix MySQL socket config
+          command: |
+            sudo sh -c "echo 'pdo_mysql.default_socket=/var/run/mysqld/mysqld.sock' > /usr/local/etc/php/conf.d/pdo.ini"
       # Download and cache dependencies
       - restore_cache:
           keys:

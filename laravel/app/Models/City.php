@@ -5,24 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Scooter extends Model
+class City extends Model
 {
-    protected $table = 'scooter'; // table name
+    protected $table = 'city'; // table name
     protected $primaryKey = 'id';
     public $timestamps = false; // stops laravel from adding fields created_at and updated_at
 
     // mass assignable properties - unsure what means
-    // columns in table 'scooter'
+    // columns in table 'city'
     protected $fillable = [
-        'customer_id',
-        'city_id',
-        'station_id',
-        'rented',
-        'lat_pos',
-        'lon_pos',
-        'maintenance_mode',
-        'active',
-        'speed_kph',
-        'battery_level'
+        'name',
+        'lat_center',
+        'lon_center',
+        'radius'
     ];
 }

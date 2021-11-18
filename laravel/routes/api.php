@@ -81,6 +81,10 @@ Route::get('/station/{id}', function ($id) {
     return Station::where('id', $id)->get();
 });
 
+Route::get('/station/{id}/scooters', function ($id) {
+    return Scooter::where('station_id', $id)->get();
+});
+
 Route::put('/stations/{id}',
     'App\Http\Controllers\Sctr\StationController@updateStation'
 );

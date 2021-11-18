@@ -30,4 +30,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // TODO change 'redirect' value to whatever frontend (full) URL
+    // is going to be used as callback once user has logged into GitHub.
+    'github' => [
+        'client_id' => env('GITHUB_CLIENT_ID'),
+        'client_secret' => env('GITHUB_CLIENT_SECRET'),
+        'redirect' => 'http://localhost:4200/api/auth/github/callback',
+    ],
 ];

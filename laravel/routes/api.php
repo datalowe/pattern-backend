@@ -115,3 +115,49 @@ Route::put('/logs/{id}',
     'App\Http\Controllers\Sctr\LoggController@updateLogg'
 );
 ////////////////////////////
+
+////////// CUSTOMER (user) OAUTH //////////
+
+// route which returns a github login url
+Route::get('/auth/github/redirect', function () {
+    // return Socialite::driver('github')->stateless()->redirect();
+
+    $redirResp = Socialite::driver('github')->stateless()->redirect();
+
+    // return github login url, including 'redirect_uri' query parameter
+    return response()->json(
+        ['login_url' => $redirResp->getTargetUrl()]
+    );
+
+    // ALTERNATIVE METHOD BELOW, returning target (GitHub) url without the 'redirect_uri'
+    // query parameter
+
+    // Remove redirect_uri parameter from target url, since the frontend should
+    // specify the redirect_uri param.
+    // $key = 'redirect_uri';
+
+    // $returnUrl = preg_replace('~(\?|&)'.$key.'=[^&]*~', '$1', $redirResp->getTargetUrl());
+
+    // parameter
+    // return response()->json(
+    //     ['login_url' => $redirResp->getTargetUrl()]
+    // );
+});
+
+// this endpoint is to be hit by frontend with query parameter 'code', (which it
+// in turn has received from GitHub after user successfully logged in)
+Route::get('/auth/github/callback', function () {
+    $user = Socialite::driver('github')->stateless()->user();
+    // TODO: store user token in database (once it's been decided how
+    // - have a special 'oauth_token' column in user table?)
+
+    // the OAuth token is attached in a cookie, which should be sent with
+    // every following AJAX request from frontend. Note that the third
+    // argument of the cookie method says when the cookie is to expire
+    // in _minutes_ while the $user->expiresIn value is in _seconds_,
+    // hence we divide by 60.
+    return response()->json(
+        ['authentication_outcome' => "success"]
+    )->cookie('oauth_token', $user->token, $user->expiresIn / 60);
+});
+////////////////////////////

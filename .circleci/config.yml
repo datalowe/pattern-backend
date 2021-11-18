@@ -1,0 +1,74 @@
+version: 2
+
+# based on https://circleci.com/blog/build-a-ci-powered-restful-api-with-laravel/
+# and https://github.com/halfer/php-mysql-circleci
+
+jobs:
+  build:
+    docker:
+      - image: circleci/php:8.0.11-node-browsers
+        environment: 
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: sctr
+          DB_USERNAME: root
+          DB_PASSWORD: fstr_hrdr_sctr
+      - image: mysql:latest
+        environment:
+          MYSQL_DATABASE: sctr
+          MYSQL_ROOT_PASSWORD: fstr_hrdr_sctr
+          DB_PORT: 3306
+    working_directory: ~/pattern-backend/laravel
+    steps:
+      - checkout:
+          path: ~/pattern-backend
+      - run:
+          name: (add mysql APT repo and) Install MySQL client in case this helps with PHP drivers
+          command: |
+            sudo apt-get update
+            sudo apt-get -y install wget lsb-release
+            sudo wget https://repo.mysql.com//mysql-apt-config_0.8.18-1_all.deb
+            sudo dpkg -i mysql-apt-config_0.8.18-1_all.deb
+            sudo apt-get update
+            sudo apt-get install mysql-client
+      - run:
+          name: Install PHP exts
+          command: |
+            sudo docker-php-ext-install zip
+            sudo docker-php-ext-configure intl
+            sudo docker-php-ext-install intl
+            sudo docker-php-ext-install pdo_mysql
+      - run:
+          name: Fix MySQL socket config
+          command: |
+            sudo sh -c "echo 'pdo_mysql.default_socket=/var/run/mysqld/mysqld.sock' > /usr/local/etc/php/conf.d/pdo.ini"
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: "Install Dependencies"
+          command: composer install -n --prefer-dist
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - run:
+          name: "Create Environment file, generate app key (and remove .env.testing)"
+          command: |
+            mv .env.circleci .env
+            php artisan key:generate
+            rm .env.testing
+      - run:
+          name: "Run migration against MySQL database"
+          command: |
+            php artisan migrate
+      - run:
+          name: "Run Tests"
+          command: ./vendor/bin/phpunit

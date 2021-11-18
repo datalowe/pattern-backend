@@ -10,6 +10,19 @@ use App\Models\Station; // Station class
 use App\Models\City; // City class
 use App\Models\Logg; // Logg class
 
+// OAuth
+use Laravel\Socialite\Facades\Socialite;
+
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('github')->redirect();
+});
+
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('github')->user();
+
+    // $user->token
+});
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,6 +43,27 @@ Route::get('scooters', function() {
     // in middleware.
     return Scooter::all();
 });
+
+
+
+// redirect method redirects to OAuth provider
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('github')->redirect();
+});
+
+// user method reads incoming request and retrieve user info from provider
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('github')->user();
+
+    // OAuth 2.0 providers...
+    $token = $user->token;
+    $refreshToken = $user->refreshToken;
+    $expiresIn = $user->expiresIn;
+    $user->getNickname();
+});
+
+///////////////////////////
+
 
 ////////// ADMIN //////////
 Route::put('/admin/{id}',

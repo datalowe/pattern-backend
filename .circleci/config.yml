@@ -1,6 +1,7 @@
 version: 2
 
 # based on https://circleci.com/blog/build-a-ci-powered-restful-api-with-laravel/
+# and https://github.com/halfer/php-mysql-circleci
 
 jobs:
   build:
@@ -23,8 +24,12 @@ jobs:
       - checkout:
           path: ~/pattern-backend
       - run:
-          name: Install MySQL client in case this helps with PHP drivers
+          name: (add mysql APT repo and) Install MySQL client in case this helps with PHP drivers
           command: |
+            sudo apt-get update
+            sudo apt-get -y install wget lsb-release
+            sudo wget https://repo.mysql.com//mysql-apt-config_0.8.18-1_all.deb
+            sudo dpkg -i mysql-apt-config_0.8.18-1_all.deb
             sudo apt-get update
             sudo apt-get install mysql-client
       - run:

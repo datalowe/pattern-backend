@@ -60,10 +60,11 @@ jobs:
           paths:
             - ./vendor
       - run:
-          name: "Create Environment file and generate app key"
+          name: "Create Environment file, generate app key (and remove .env.testing)"
           command: |
             mv .env.circleci .env
             php artisan key:generate
+            rm .env.testing
       - run:
           name: "Run migration against MySQL database"
           command: |

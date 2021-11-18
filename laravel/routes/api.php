@@ -96,6 +96,14 @@ Route::get('/cities/{id}', function ($id) {
     return City::where('id', $id)->get();
 });
 
+Route::get('/cities/{id}/scooters', function ($id) {
+    return Scooter::where('city_id', $id)->get();
+});
+
+Route::get('/cities/{id}/stations', function ($id) {
+    return Station::where('city_id', $id)->get();
+});
+
 Route::put('/cities/{id}',
     'App\Http\Controllers\Sctr\CityController@updateCity'
 );

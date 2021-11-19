@@ -60,7 +60,6 @@ Route::get('/scooters/available', function () {
             ->where('scooter.customer_id', '=', null) // no current customer
             ->where('scooter.battery_level', '>=', 10) // minimum battery level
             ->where('scooter.status', '=', 'active')
-            // ->where('sc')
             ->orderBy('scooter.id', 'asc')
             ->get('scooter.*');
     });

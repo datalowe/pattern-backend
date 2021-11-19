@@ -31,7 +31,6 @@ class ScooterController extends Controller
 
         isset($body->lat_pos) ? $scooter->lat_pos = $body->lat_pos : null;
         isset($body->lon_pos) ? $scooter->lon_pos = $body->lon_pos : null;
-        isset($body->active) ? $scooter->active = $body->active : null;
         isset($body->speed_kph) ? $scooter->speed_kph = $body->speed_kph : null;
         isset($body->battery_level) ? $scooter->battery_level = $body->battery_level : null;
         isset($body->status) ? $scooter->status = $body->status : null;

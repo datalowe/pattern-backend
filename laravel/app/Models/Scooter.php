@@ -19,7 +19,6 @@ class Scooter extends Model
         'station_id',
         'lat_pos',
         'lon_pos',
-        'active',
         'speed_kph',
         'battery_level',
         'status'

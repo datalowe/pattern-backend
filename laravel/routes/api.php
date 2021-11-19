@@ -51,6 +51,21 @@ Route::put('/users/{id}',
 
 
 ////////// SCOOTERS //////////
+
+// must be placed before /scooters, otherwise empty array
+Route::get('/scooters/available', function () {
+    return DB::table('scooter')
+        ->leftJoin('station', 'scooter.station_id', '=', 'station.id')
+            ->where('station.type', '!=', 'charge') // exclude charge stations
+            ->where('scooter.customer_id', '=', null) // no current customer
+            ->where('scooter.battery_level', '>=', 10) // minimum battery level
+            ->where('scooter.status', '=', 'active')
+            // ->where('sc')
+            ->orderBy('scooter.id', 'asc')
+            ->get('scooter.*');
+    });
+
+
 Route::get('/scooters', function () {
     return Scooter::all();
 });
@@ -143,8 +158,8 @@ Route::get('/auth/github/callback', function () {
     $user = Socialite::driver('github')->stateless()->user();
     // TODO: store user token in database, once it's been decided how
     // - have a special 'oauth_token' column in user table. here, it should
-    // first be checked if the user already exists, (using $user->getNickName() value) 
-    // to ensure that no 'duplicate' user records are created (should also be 
+    // first be checked if the user already exists, (using $user->getNickName() value)
+    // to ensure that no 'duplicate' user records are created (should also be
     // controlled on database level by having github_username column set to
     // UNIQUE). moreover, this check
     // should be done first against the 'adm' table to see if the user is

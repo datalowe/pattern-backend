@@ -123,46 +123,54 @@ Route::put('/logs/{id}',
 
 ////////// CUSTOMER (user) OAUTH //////////
 
-// route which returns a github login url
+// route which returns a github login url in a JSON response, which frontend
+// should make user go to in a separate tab.
 Route::get('/auth/github/redirect', function () {
-    // return Socialite::driver('github')->stateless()->redirect();
-
+    // need to use 'stateless()' method here since API routes don't involve
+    // session middleware, and Socialite by default relies on Session. calling
+    // 'stateless()' disables this reliance.
     $redirResp = Socialite::driver('github')->stateless()->redirect();
 
     // return github login url, including 'redirect_uri' query parameter
     return response()->json(
         ['login_url' => $redirResp->getTargetUrl()]
     );
-
-    // ALTERNATIVE METHOD BELOW, returning target (GitHub) url without the 'redirect_uri'
-    // query parameter
-
-    // Remove redirect_uri parameter from target url, since the frontend should
-    // specify the redirect_uri param.
-    // $key = 'redirect_uri';
-
-    // $returnUrl = preg_replace('~(\?|&)'.$key.'=[^&]*~', '$1', $redirResp->getTargetUrl());
-
-    // parameter
-    // return response()->json(
-    //     ['login_url' => $redirResp->getTargetUrl()]
-    // );
 });
 
-// this endpoint is to be hit by frontend with query parameter 'code', (which it
-// in turn has received from GitHub after user successfully logged in)
+// the user should be sent to this 'callback' route endpoint by github.
 Route::get('/auth/github/callback', function () {
+    // again, need to use 'stateless()' (see comment in 'redirect' route code)
     $user = Socialite::driver('github')->stateless()->user();
-    // TODO: store user token in database (once it's been decided how
-    // - have a special 'oauth_token' column in user table?)
+    // TODO: store user token in database, once it's been decided how
+    // - have a special 'oauth_token' column in user table. here, it should
+    // first be checked if the user already exists, (using $user->getNickName() value) 
+    // to ensure that no 'duplicate' user records are created (should also be 
+    // controlled on database level by having github_username column set to
+    // UNIQUE). moreover, this check
+    // should be done first against the 'adm' table to see if the user is
+    // actually an admin, then against the (regular) 'user' table. if
+    // the user doesn't exist, a new 'user' record is created.
 
     // the OAuth token is attached in a cookie, which should be sent with
     // every following AJAX request from frontend. Note that the third
     // argument of the cookie method says when the cookie is to expire
     // in _minutes_ while the $user->expiresIn value is in _seconds_,
     // hence we divide by 60.
-    return response()->json(
-        ['authentication_outcome' => "success"]
+    return response(
+        'Hej ' . $user->getNickName() . '! Du är nu inloggad via GitHub. Vänligen stäng den här fliken och återvänd till SCTR.'
     )->cookie('oauth_token', $user->token, $user->expiresIn / 60);
 });
+
+// route for simply checking if the user is logged in via OAuth
+Route::get('auth/github/check-usertype', function (Request $req) {
+    $token = $req->cookie('oauth_token');
+    // TODO: add check against database tables, adm and user. make
+    // add 'user_type': 'admin' response branch accordingly.
+    if ($token) {
+        return response()->json(['user_type' => 'user']);
+    } else {
+        return response()->json(['user_type' => 'not_logged_in']);
+    }
+});
+
 ////////////////////////////

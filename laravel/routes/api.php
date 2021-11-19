@@ -111,8 +111,12 @@ Route::get('/stations', function () {
     return Station::all();
 });
 
-Route::get('/station/{id}', function ($id) {
+Route::get('/stations/{id}', function ($id) {
     return Station::where('id', $id)->get();
+});
+
+Route::get('/stations/{id}/scooters', function ($id) {
+    return Scooter::where('station_id', $id)->get();
 });
 
 Route::put('/stations/{id}',

@@ -10,6 +10,9 @@ use App\Models\Station; // Station class
 use App\Models\City; // City class
 use App\Models\Logg; // Logg class
 
+// OAuth
+use Laravel\Socialite\Facades\Socialite;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,16 +23,6 @@ use App\Models\Logg; // Logg class
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-Route::get('scooters', function() {
-    // TODO: This (and other routes) should be wrapped
-    // in middleware.
-    return Scooter::all();
-});
 
 ////////// ADMIN //////////
 Route::put('/admin/{id}',
@@ -77,8 +70,12 @@ Route::get('/stations', function () {
     return Station::all();
 });
 
-Route::get('/station/{id}', function ($id) {
+Route::get('/stations/{id}', function ($id) {
     return Station::where('id', $id)->get();
+});
+
+Route::get('/stations/{id}/scooters', function ($id) {
+    return Scooter::where('station_id', $id)->get();
 });
 
 Route::put('/stations/{id}',

@@ -54,14 +54,12 @@ Route::put('/users/{id}',
 
 // must be placed before /scooters, otherwise empty array
 Route::get('/scooters/available', function () {
-    return DB::table('scooter')
-        ->leftJoin('station', 'scooter.station_id', '=', 'station.id')
-            ->where('scooter.customer_id', '=', null) // no current customer
-            ->where('scooter.battery_level', '>=', 10) // minimum battery level
-            ->where('scooter.status', '=', 'active')
-            ->orderBy('scooter.id', 'asc')
-            ->get('scooter.*');
-    });
+    return Scooter::where('scooter.customer_id', '=', null)
+        ->where('scooter.battery_level', '>=', 10)
+        ->where('scooter.status', '=', 'active')
+        ->orderBy('scooter.id', 'asc')
+        ->get();
+});
 
 Route::get('/scooters', function () {
     return Scooter::all();

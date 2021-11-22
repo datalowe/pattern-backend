@@ -3,7 +3,7 @@ This repository is part of a group project done for the ['pattern' course](https
 
 This repository mainly consists of code for building a Docker container running a Laravel REST API server with a database. It includes a submodule 'pattern-db', based on [the SCTR database repository](https://github.com/joki20/pattern-db).
 
-Note that, in order to include the submodule's code, when cloning the repository you need to run `git clone --recurse-submodules https://github.com/datalowe/pattern-backend`.
+Note that, in order to include the submodule's code, when cloning the repository you need to run `git clone --recurse-submodules git@github.com:datalowe/pattern-backend.git`.
 
 ## Developer mode
 During development, it's handy to have a Docker container with the database running in the background, but editing Laravel code and immediately checking updates on the host computer.
@@ -28,7 +28,7 @@ docker-compose up
 ```
 Note that this command runs in 'attached' mode, meaning the terminal will show output logs from both the database and the Laravel/backend containers. This is useful to keep track of when both containers (especially the database) have finished loading and you should be able to connect. If you want to run in detached mode instead, use `docker-compose -d up`.
 
-To interact with the Laravel application, go to (in your browser, on the host computer) e.g. `localhost:8080` or `localhost:8080/api/scooters`.
+To interact with the Laravel application, go to (in your browser, on the host computer) e.g. `localhost:8000` or `localhost:8000/api/scooters`. __Note that the default Laravel development mode port (8000) is used here__, meaning you can't have Laravel running on your host machine and using the Docker containers at the same time.
 
 To bring containers down and delete them, run (after hitting 'ctrl+C'/'Cmd+C' if you ran in 'attached mode')
 ```bash

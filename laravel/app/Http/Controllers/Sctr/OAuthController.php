@@ -84,11 +84,22 @@ class OAuthController extends Controller
 
     public function checkUserType(Request $req) {
         if (Customer::isCustomerReq($req)) {
-            return response()->json(['user_type' => 'customer']);
+            $customer = Customer::reqToCustomer($req);
+            return response()->json([
+                'user_type' => 'customer',
+                'id' => $customer->id
+            ]);
         }
         if (Adm::isAdmReq($req)) {
-            return response()->json(['user_type' => 'admin']);
+            $adm = Customer::reqToCustomer($req);
+            return response()->json([
+                'user_type' => 'admin',
+                'id' => $adm->id
+            ]);
         }
-        return response()->json(['user_type' => 'not_logged_in']);
+        return response()->json([
+            'user_type' => 'not_logged_in',
+            'id' => 'none'
+        ]);
     }
 }

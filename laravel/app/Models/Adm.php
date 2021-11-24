@@ -31,4 +31,8 @@ class Adm extends Model
         return false;
         return true;
     }
+
+    public static function reqToAdm(Request $req) {
+        return self::firstWhere('token', $req->cookie('oauth_token'));
+    }
 }

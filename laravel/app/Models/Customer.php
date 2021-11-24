@@ -34,4 +34,8 @@ class Customer extends Model
         }
         return true;
     }
+
+    public static function reqToCustomer(Request $req) {
+        return self::firstWhere('token', $req->cookie('oauth_token'));
+    }
 }

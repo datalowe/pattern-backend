@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Gate;
 
 use App\Models\Adm; // Admin class
 use App\Models\Customer; // Customer class
@@ -126,10 +128,16 @@ Route::put('/logs/{id}',
 // route which returns a github login url in a JSON response, which frontend
 // should make user go to in a separate tab.
 Route::get('/auth/github/redirect', function () {
+    // overriding normal callback URL to ensure that user will be redirected
+    // back correctly by GitHub to continue customer login flow
+    $callbackUrl = URL::to(env('GITHUB_CALLBACK_PATH_CUSTOMER'));
     // need to use 'stateless()' method here since API routes don't involve
     // session middleware, and Socialite by default relies on Session. calling
     // 'stateless()' disables this reliance.
-    $redirResp = Socialite::driver('github')->stateless()->redirect();
+    $redirResp = Socialite::driver('github')
+        ->stateless()
+        ->with(['redirect_uri' => $callbackUrl])
+        ->redirect();
 
     // return github login url, including 'redirect_uri' query parameter
     return response()->json(
@@ -141,15 +149,13 @@ Route::get('/auth/github/redirect', function () {
 Route::get('/auth/github/callback', function () {
     // again, need to use 'stateless()' (see comment in 'redirect' route code)
     $user = Socialite::driver('github')->stateless()->user();
-    // TODO: store user token in database, once it's been decided how
-    // - have a special 'oauth_token' column in user table. here, it should
-    // first be checked if the user already exists, (using $user->getNickName() value) 
-    // to ensure that no 'duplicate' user records are created (should also be 
-    // controlled on database level by having github_username column set to
-    // UNIQUE). moreover, this check
-    // should be done first against the 'adm' table to see if the user is
-    // actually an admin, then against the (regular) 'user' table. if
-    // the user doesn't exist, a new 'user' record is created.
+
+    // if customer exists in database table, update its token. if the customer
+    // does _not_ exist, create it with the correct username and token
+    Customer::updateOrCreate(
+        ['username' => $user->getNickName()],
+        ['token' => $user->token ]
+    );
 
     // the OAuth token is attached in a cookie, which should be sent with
     // every following AJAX request from frontend. Note that the third
@@ -161,16 +167,19 @@ Route::get('/auth/github/callback', function () {
     )->cookie('oauth_token', $user->token, $user->expiresIn / 60);
 });
 
-// route for simply checking if the user is logged in via OAuth
-Route::get('auth/github/check-usertype', function (Request $req) {
-    $token = $req->cookie('oauth_token');
-    // TODO: add check against database tables, adm and user. make
-    // add 'user_type': 'admin' response branch accordingly.
-    if ($token) {
-        return response()->json(['user_type' => 'user']);
-    } else {
-        return response()->json(['user_type' => 'not_logged_in']);
-    }
-});
-
 ////////////////////////////
+
+// TODO add admin-specific OAUTH routes
+
+
+
+// route for checking if user is logged in with OAuth, and if so, as admin or customer
+Route::get('auth/github/check-usertype', function (Request $req) {
+    if (Customer::isCustomerReq($req)) {
+        return response()->json(['user_type' => 'customer']);
+    }
+    if (Adm::isAdmReq($req)) {
+        return response()->json(['user_type' => 'admin']);
+    }
+    return response()->json(['user_type' => 'not_logged_in']);
+});

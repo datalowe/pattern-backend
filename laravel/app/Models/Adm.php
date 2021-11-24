@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Adm extends Model
 {
@@ -17,4 +18,17 @@ class Adm extends Model
         'username',
         'password'
     ];
+
+    public static function isAdmReq(Request $req) {
+        $token = $req->cookie('oauth_token');
+
+        // check if user actually has 'oauth_token' cookie
+        if (! $token) {
+            return false;
+        }
+        // TODO add logic for checking if user's token is in
+        // admin table 'token' column
+        return false;
+        return true;
+    }
 }

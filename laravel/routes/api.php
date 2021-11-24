@@ -2,15 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Gate;
 
-use App\Models\Adm; // Admin class
 use App\Models\Customer; // Customer class
 use App\Models\Scooter; // Scooter class
 use App\Models\Station; // Station class
 use App\Models\City; // City class
 use App\Models\Logg; // Logg class
+
+use App\Http\Controllers\Sctr\OAuthController;
 
 // OAuth
 use Laravel\Socialite\Facades\Socialite;
@@ -123,63 +122,26 @@ Route::put('/logs/{id}',
 );
 ////////////////////////////
 
-////////// CUSTOMER (user) OAUTH //////////
+////////// CUSTOMER OAUTH //////////
 
 // route which returns a github login url in a JSON response, which frontend
 // should make user go to in a separate tab.
-Route::get('/auth/github/redirect', function () {
-    // overriding normal callback URL to ensure that user will be redirected
-    // back correctly by GitHub to continue customer login flow
-    $callbackUrl = URL::to(env('GITHUB_CALLBACK_PATH_CUSTOMER'));
-    // need to use 'stateless()' method here since API routes don't involve
-    // session middleware, and Socialite by default relies on Session. calling
-    // 'stateless()' disables this reliance.
-    $redirResp = Socialite::driver('github')
-        ->stateless()
-        ->with(['redirect_uri' => $callbackUrl])
-        ->redirect();
-
-    // return github login url, including 'redirect_uri' query parameter
-    return response()->json(
-        ['login_url' => $redirResp->getTargetUrl()]
-    );
-});
+Route::get('/auth/github/redirect', [OAuthController::class, 'githubRedirectCustomer']);
 
 // the user should be sent to this 'callback' route endpoint by github.
-Route::get('/auth/github/callback', function () {
-    // again, need to use 'stateless()' (see comment in 'redirect' route code)
-    $user = Socialite::driver('github')->stateless()->user();
-
-    // if customer exists in database table, update its token. if the customer
-    // does _not_ exist, create it with the correct username and token
-    Customer::updateOrCreate(
-        ['username' => $user->getNickName()],
-        ['token' => $user->token ]
-    );
-
-    // the OAuth token is attached in a cookie, which should be sent with
-    // every following AJAX request from frontend. Note that the third
-    // argument of the cookie method says when the cookie is to expire
-    // in _minutes_ while the $user->expiresIn value is in _seconds_,
-    // hence we divide by 60.
-    return response(
-        'Hej ' . $user->getNickName() . '! Du är nu inloggad via GitHub. Vänligen stäng den här fliken och återvänd till SCTR.'
-    )->cookie('oauth_token', $user->token, $user->expiresIn / 60);
-});
+Route::get('/auth/github/callback', [OAuthController::class, 'githubCallbackCustomer']);
 
 ////////////////////////////
 
-// TODO add admin-specific OAUTH routes
+////////// ADMIN OAUTH //////////
+
+Route::get('/auth/github/redirect/admin', [OAuthController::class, 'githubRedirectAdmin']);
+
+Route::get('/auth/github/callback/admin', [OAuthController::class, 'githubCallbackAdmin']);
+
+////////////////////////////
 
 
 
 // route for checking if user is logged in with OAuth, and if so, as admin or customer
-Route::get('auth/github/check-usertype', function (Request $req) {
-    if (Customer::isCustomerReq($req)) {
-        return response()->json(['user_type' => 'customer']);
-    }
-    if (Adm::isAdmReq($req)) {
-        return response()->json(['user_type' => 'admin']);
-    }
-    return response()->json(['user_type' => 'not_logged_in']);
-});
+Route::get('auth/github/check-usertype', [OAuthController::class, 'checkUserType']);

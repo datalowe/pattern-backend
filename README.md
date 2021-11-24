@@ -23,10 +23,12 @@ You can find additional developer notes in 'developer_notes.md' here in the root
 ```bash
 cd /path/to/this/dir
 
-# depending on your host OS, you might need/prefer to use `docker compose up` instead
-docker-compose up
+# depending on your host OS, you might need/prefer to use `docker compose up` instead.
+# note the '--build' flag which ensures that images are always built, rather than
+# containers being run based on pre-existing, possibly outdated, images.
+docker-compose up --build
 ```
-Note that this command runs in 'attached' mode, meaning the terminal will show output logs from both the database and the Laravel/backend containers. This is useful to keep track of when both containers (especially the database) have finished loading and you should be able to connect. If you want to run in detached mode instead, use `docker-compose -d up`.
+Note that this command runs in 'attached' mode, meaning the terminal will show output logs from both the database and the Laravel/backend containers. This is useful to keep track of when both containers (especially the database) have finished loading and you should be able to connect. If you want to run in detached mode instead, use `docker-compose -d up --build`.
 
 To interact with the Laravel application, go to (in your browser, on the host computer) e.g. `localhost:8000` or `localhost:8000/api/scooters`. __Note that the default Laravel development mode port (8000) is used here__, meaning you can't have Laravel running on your host machine and using the Docker containers at the same time.
 

@@ -21,7 +21,9 @@ return [
 
     'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [],
+    // TODO: update allowed_origins_patterns to only include the localhost/port combinations
+    // we use in the project.
+    'allowed_origins_patterns' => ['*'],
 
     'allowed_headers' => ['*'],
 

@@ -33,12 +33,28 @@ Route::put('/admin/{id}',
 
 
 ////////// USERS //////////
+
+
+
+
+
+
 Route::get('/users', function () {
     return Customer::all();
 });
 
 Route::get('/users/{id}', function ($id) {
     return Customer::where('id', $id)->get();
+});
+
+Route::get('/users/{id}/logs', function ($id) {
+    return DB::table('customer')
+    ->join('logg', function ($join) use(&$id) { // 'use' accesses outer scope variable
+        $join->on('customer.id', '=', 'logg.customer_id')
+            ->select('customer.*', 'logg.*')
+            ->where('customer.id', $id);
+    })
+    ->get();
 });
 
 Route::post('/users',

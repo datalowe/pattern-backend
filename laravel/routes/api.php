@@ -54,7 +54,13 @@ Route::get('/users/{id}/logs', function ($id) {
             ->select('customer.*', 'logg.*')
             ->where('customer.id', $id);
     })
-    ->get();
+    ->get([
+        'customer.id',
+        'customer.username',
+        'customer.funds',
+        'customer.payment_terms',
+        'logg.*'
+        ]);
 });
 
 Route::post('/users',

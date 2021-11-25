@@ -11,6 +11,7 @@ class Adm extends Model
     protected $table = 'adm'; // table name
     protected $primaryKey = 'id';
     public $timestamps = false; // stops laravel from adding fields created_at and updated_at
+    protected $hidden = ['token'];
 
     // mass assignable properties - unsure what means
     // columns in table 'adm'

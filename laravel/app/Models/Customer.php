@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Customer extends Model
 {
@@ -14,9 +15,27 @@ class Customer extends Model
     // mass assignable properties - unsure what means
     // columns in table 'customer'
     protected $fillable = [
-        'username',
-        'password',
-        'funds',
-        'payment_terms'
+        // 'username',
+        'token'
+        // 'funds',
+        // 'payment_terms'
     ];
+
+    public static function isCustomerReq(Request $req) {
+        $token = $req->cookie('oauth_token');
+
+        // check if user actually has 'oauth_token' cookie
+        if (! $token) {
+            return false;
+        }
+        // check if user's token is in the database's customer table.
+        if (! self::firstWhere('token', $token)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static function reqToCustomer(Request $req) {
+        return self::firstWhere('token', $req->cookie('oauth_token'));
+    }
 }

@@ -74,7 +74,8 @@ class OAuthController extends Controller
             );
         }
 
-        // TODO add saving to database once admin table also has a 'token' column.
+        $adminRecord->token = $user->token;
+        $adminRecord->save();
 
         return response(
             'Hej ' . $user->getNickName() . '! Du är nu inloggad som admin via GitHub. 
@@ -91,7 +92,7 @@ class OAuthController extends Controller
             ]);
         }
         if (Adm::isAdmReq($req)) {
-            $adm = Customer::reqToCustomer($req);
+            $adm = Adm::reqToAdm($req);
             return response()->json([
                 'user_type' => 'admin',
                 'id' => $adm->id

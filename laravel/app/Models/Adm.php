@@ -15,8 +15,8 @@ class Adm extends Model
     // mass assignable properties - unsure what means
     // columns in table 'adm'
     protected $fillable = [
-        'username',
-        'password'
+        // 'username',
+        // 'token'
     ];
 
     public static function isAdmReq(Request $req) {
@@ -26,9 +26,10 @@ class Adm extends Model
         if (! $token) {
             return false;
         }
-        // TODO add logic for checking if user's token is in
-        // admin table 'token' column
-        return false;
+        // check if user's token is in the database's adm table.
+        if (! self::firstWhere('token', $token)) {
+            return false;
+        }
         return true;
     }
 

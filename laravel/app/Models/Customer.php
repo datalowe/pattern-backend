@@ -11,6 +11,7 @@ class Customer extends Model
     protected $table = 'customer'; // table name
     protected $primaryKey = 'id';
     public $timestamps = false; // stops laravel from adding fields created_at and updated_at
+    protected $hidden = ['token'];
 
     // mass assignable properties - unsure what means
     // columns in table 'customer'

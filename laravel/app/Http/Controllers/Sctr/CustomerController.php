@@ -14,7 +14,8 @@ class CustomerController extends Controller
 
         // add column in row if body contains value
         isset($body->username) ? $user->username = $body->username : null;
-        isset($body->password) ? $user->password = $body->password : null;
+        isset($body->token) ? $user->token = $body->token : null;
+        
         // create new row
         $user->save();
     }
@@ -27,7 +28,7 @@ class CustomerController extends Controller
 
         // update specific column in row if body contains key-value
         isset($body->username) ? $user->username = $body->username : null; // assign $body->location
-        isset($body->password) ? $user->password = $body->password : null;
+        isset($body->token) ? $user->token = $body->token : null;
         isset($body->funds) ? $user->funds = $body->funds : null;
         isset($body->payment_terms) ? $user->payment_terms = $body->payment_terms : null;
 

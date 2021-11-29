@@ -8,18 +8,21 @@ use Illuminate\Http\Request; // for POST route
 
 class StationController extends Controller
 {
-    // $id from web.php contains city_id, $body contains key-value from POST
+    // $id from api.php contains city_id, $body contains key-value from POST
     public function updateStation($id, Request $body)
     {
-        // find scooter by its primary key
+        // find Station by its primary key
         $station = Station::find($id);
-
-        // update specific column in row if body contains key-value
-        isset($body->location) ? $station->location = $body->location : null; // assign $body->location
-        isset($body->lat_center) ? $station->lat_center = $body->lat_center : null;
-        isset($body->lon_center) ? $station->lon_center = $body->lon_center : null;
-        isset($body->radius) ? $station->radius = $body->radius : null;
-        isset($body->type) ? $station->type = $body->type : null;
+        // get all columns from request body
+        $columns = $body->all();
+        // iterate through all columns, replace value if column was found
+        foreach ($columns as $column => $value) {
+            // if value is "setNull", and column value is not already null, set it to null, otherwise nothing
+            $value == "setNull" ? (
+                $body->$column != null ? $station->$column = null : null
+                // if not "setNull" is passed but another value, set column to that value
+            ) : $station->$column = $value;
+        }
 
         // update station
         $station->save();

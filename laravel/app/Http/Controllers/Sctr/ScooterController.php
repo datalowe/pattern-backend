@@ -13,28 +13,16 @@ class ScooterController extends Controller
     {
         // find scooter by its primary key
         $scooter = Scooter::find($id);
-
-        // update specific column in row if body contains key-value
-        if ($body->customer_id != null && $body->customer_id == "setNull") {
-            $scooter->customer_id = null;
-        } elseif ($body->customer_id != null) {
-            $scooter->customer_id = $body->customer_id;
-        }; // assign $body->customer_id
-
-        isset($body->city_id) ? $scooter->city_id = $body->city_id : null;
-        // update specific column in row if body contains key-value
-        if ($body->station_id != null && $body->station_id == "setNull") {
-            $scooter->station_id = null;
-        } elseif ($body->station_id != null) {
-            $scooter->station_id = $body->station_id;
-        }; // assign $body->station_id
-
-        isset($body->lat_pos) ? $scooter->lat_pos = $body->lat_pos : null;
-        isset($body->lon_pos) ? $scooter->lon_pos = $body->lon_pos : null;
-        isset($body->active) ? $scooter->active = $body->active : null;
-        isset($body->speed_kph) ? $scooter->speed_kph = $body->speed_kph : null;
-        isset($body->battery_level) ? $scooter->battery_level = $body->battery_level : null;
-        isset($body->status) ? $scooter->status = $body->status : null;
+        // get all columns from request body
+        $columns = $body->all();
+        // iterate through all columns, replace value if column was found
+        foreach ($columns as $column => $value) {
+            // if value is "setNull", and column value is not already null, set it to null, otherwise nothing
+            $value == "setNull" ? (
+                $body->$column != null ? $scooter->$column = null : null
+                // if not "setNull" is passed but another value, set column to that value
+            ) : $scooter->$column = $value;
+        }
 
         // update scooter
         $scooter->save();

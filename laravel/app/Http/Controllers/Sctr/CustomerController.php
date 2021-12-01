@@ -14,7 +14,8 @@ class CustomerController extends Controller
 
         // add column in row if body contains value
         isset($body->username) ? $user->username = $body->username : null;
-        isset($body->password) ? $user->password = $body->password : null;
+        isset($body->token) ? $user->token = $body->token : null;
+
         // create new row
         $user->save();
     }
@@ -22,14 +23,18 @@ class CustomerController extends Controller
     // $id from web.php contains city_id, $body contains key-value from POST
     public function updateCustomer($id, Request $body)
     {
-        // find scooter by its primary key
-        $user = Customer::find($id);
-
-        // update specific column in row if body contains key-value
-        isset($body->username) ? $user->username = $body->username : null; // assign $body->location
-        isset($body->password) ? $user->password = $body->password : null;
-        isset($body->funds) ? $user->funds = $body->funds : null;
-        isset($body->payment_terms) ? $user->payment_terms = $body->payment_terms : null;
+        // find Customer by its primary key
+        $customer = Customer::find($id);
+        // get all columns from request body
+        $columns = $body->all();
+        // iterate through all columns, replace value if column was found
+        foreach ($columns as $column => $value) {
+            // if value is "setNull", and column value is not already null, set it to null, otherwise nothing
+            $value == "setNull" ? (
+                $body->$column != null ? $customer->$column = null : null
+                // if not "setNull" is passed but another value, set column to that value
+            ) : $customer->$column = $value;
+        }
 
         // update user
         $user->save();

@@ -17,7 +17,7 @@ class AdmController extends Controller
 
         // update specific column in row if body contains key-value
         isset($body->username) ? $adm->username = $body->username : null; // assign $body->username
-        isset($body->password) ? $adm->password = $body->password : null;
+        isset($body->token) ? $adm->token = $body->token : null;
 
         // update adm
         $adm->save();

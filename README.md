@@ -52,7 +52,8 @@ Note that the pattern-db submodule is the single source of truth for what the da
 
 If pattern-db is updated in a manner which makes the migrations files outdated, follow these steps to update them:
 
-1. Delete all non-default Laravel migrations files (ie files whose names start with a later date than '2019_12_14') from 'laravel/database/migrations'.
+1. Delete all Laravel migrations files from 'laravel/database/migrations'.
+2. If there isn't already one running, start a MySQL container according to the instructions in 'pattern-db/README.md'.
 2. `cd` into the 'laravel' directory.
 3. Run `php artisan migrate:generate`.
 

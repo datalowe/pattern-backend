@@ -16,7 +16,7 @@ class CreateCustomerTable extends Migration
         Schema::create('customer', function (Blueprint $table) {
             $table->integer('id', true);
             $table->string('username', 20)->nullable()->unique('username');
-            $table->char('password')->nullable();
+            $table->string('token', 200)->nullable();
             $table->decimal('funds', 7)->nullable()->default(0);
             $table->enum('payment_terms', ['invoice', 'prepaid'])->nullable()->default('invoice');
         });

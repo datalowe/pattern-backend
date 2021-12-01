@@ -20,9 +20,8 @@ class CreateScooterTable extends Migration
             $table->integer('station_id')->nullable()->index('station_id');
             $table->decimal('lat_pos', 9, 6)->nullable();
             $table->decimal('lon_pos', 9, 6)->nullable();
-            $table->boolean('active')->nullable()->default(true);
             $table->integer('speed_kph')->nullable()->default(0);
-            $table->integer('battery_level')->nullable()->default(100);
+            $table->decimal('battery_level', 5)->nullable()->default(100);
             $table->enum('status', ['active', 'inactive', 'maintenance'])->nullable()->default('active');
         });
     }

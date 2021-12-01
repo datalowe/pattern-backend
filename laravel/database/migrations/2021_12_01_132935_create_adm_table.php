@@ -16,7 +16,7 @@ class CreateAdmTable extends Migration
         Schema::create('adm', function (Blueprint $table) {
             $table->integer('id', true);
             $table->string('username', 20)->nullable();
-            $table->char('password')->nullable();
+            $table->string('token', 200)->nullable();
         });
     }
 

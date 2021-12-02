@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Sctr;
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Request;
-
 use Laravel\Socialite\Facades\Socialite;
-
 use App\Http\Controllers\Controller;
-
 use App\Models\Adm; // Admin class
-use App\Models\Customer; // Customer class
+use App\Models\Customer;
+
+// Customer class
 
 class OAuthController extends Controller
 {
-    private function githubRedirect(string $callbackPath) {
+    private function githubRedirect(string $callbackPath)
+    {
         // overriding normal callback URL to ensure that user will be redirected
         // back correctly by GitHub to continue customer login flow
         $callbackUrl = URL::to($callbackPath);
@@ -32,15 +32,18 @@ class OAuthController extends Controller
         );
     }
 
-    public function githubRedirectCustomer() {
+    public function githubRedirectCustomer()
+    {
         return self::githubRedirect(env('GITHUB_CALLBACK_PATH_CUSTOMER'));
     }
 
-    public function githubRedirectAdmin() {
+    public function githubRedirectAdmin()
+    {
         return self::githubRedirect(env('GITHUB_CALLBACK_PATH_ADMIN'));
     }
 
-    public function githubCallbackCustomer() {
+    public function githubCallbackCustomer()
+    {
         $user = Socialite::driver('github')->stateless()->user();
 
         // if customer exists in database table, update its token. if the customer
@@ -61,7 +64,8 @@ class OAuthController extends Controller
         )->cookie('oauth_token', $user->token, $user->expiresIn / 60);
     }
 
-    public function githubCallbackAdmin() {
+    public function githubCallbackAdmin()
+    {
         $user = Socialite::driver('github')->stateless()->user();
 
         $adminRecord = Adm::firstWhere('username', $user->getNickName());
@@ -83,7 +87,8 @@ class OAuthController extends Controller
         )->cookie('oauth_token', $user->token, $user->expiresIn / 60);
     }
 
-    public function checkUserType(Request $req) {
+    public function checkUserType(Request $req)
+    {
         if (Customer::isCustomerReq($req)) {
             $customer = Customer::reqToCustomer($req);
             return response()->json([

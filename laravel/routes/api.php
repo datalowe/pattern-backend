@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 use App\Models\Customer; // Customer class
 use App\Models\Scooter; // Scooter class
 use App\Models\Station; // Station class
@@ -11,7 +10,6 @@ use App\Models\Logg; // Logg class
 
 use App\Http\Controllers\Sctr\OAuthController;
 use App\Http\Controllers\Sctr\ScooterController;
-
 // OAuth
 use Laravel\Socialite\Facades\Socialite;
 
@@ -27,7 +25,8 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 ////////// ADMIN //////////
-Route::put('/admin/{id}',
+Route::put(
+    '/admin/{id}',
     'App\Http\Controllers\Sctr\AdmController@updateAdmin'
 );
 ///////////////////////////
@@ -44,7 +43,8 @@ Route::get('/users/{id}', function ($id) {
 
 Route::get('/users/{id}/logs', function ($id) {
     return DB::table('customer')
-    ->join('logg', function ($join) use(&$id) { // 'use' accesses outer scope variable
+    ->join('logg', function ($join) use (&$id) {
+ // 'use' accesses outer scope variable
         $join->on('customer.id', '=', 'logg.customer_id')
             ->select('customer.*', 'logg.*')
             ->where('customer.id', $id);
@@ -58,11 +58,13 @@ Route::get('/users/{id}/logs', function ($id) {
         ]);
 });
 
-Route::post('/users',
+Route::post(
+    '/users',
     'App\Http\Controllers\Sctr\CustomerController@addCustomer'
 );
 
-Route::put('/users/{id}',
+Route::put(
+    '/users/{id}',
     'App\Http\Controllers\Sctr\CustomerController@updateCustomer'
 );
 ///////////////////////////
@@ -75,7 +77,8 @@ Route::get('/scooters/{id}', function ($id) {
     return Scooter::where('id', $id)->get();
 });
 
-Route::put('/scooters/{id}',
+Route::put(
+    '/scooters/{id}',
     'App\Http\Controllers\Sctr\ScooterController@updateScooter'
 );
 
@@ -99,7 +102,8 @@ Route::get('/stations/{id}/scooters', function ($id) {
     return Scooter::where('station_id', $id)->get();
 });
 
-Route::put('/stations/{id}',
+Route::put(
+    '/stations/{id}',
     'App\Http\Controllers\Sctr\StationController@updateStation'
 );
 //////////////////////////////
@@ -122,7 +126,8 @@ Route::get('/cities/{id}/stations', function ($id) {
     return Station::where('city_id', $id)->get();
 });
 
-Route::put('/cities/{id}',
+Route::put(
+    '/cities/{id}',
     'App\Http\Controllers\Sctr\CityController@updateCity'
 );
 ////////////////////////////
@@ -137,7 +142,8 @@ Route::get('/logs/{id}', function ($id) {
     return Logg::where('id', $id)->get();
 });
 
-Route::put('/logs/{id}',
+Route::put(
+    '/logs/{id}',
     'App\Http\Controllers\Sctr\LoggController@updateLogg'
 );
 ////////////////////////////

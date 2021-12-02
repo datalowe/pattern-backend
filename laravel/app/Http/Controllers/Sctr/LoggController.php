@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Sctr;
 
 use App\Http\Controllers\Controller;
 use App\Models\Logg; // model of table
-use Illuminate\Http\Request; // for POST route
+use Illuminate\Http\Request;
+
+// for POST route
 
 class LoggController extends Controller
 {

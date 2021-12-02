@@ -13,10 +13,11 @@ class Customer extends Model
     public $timestamps = false; // stops laravel from adding fields created_at and updated_at
     protected $hidden = ['token'];
 
-    // mass assignable properties - unsure what means
+    // mass assignable properties - unsure what means exactly, but at least it
+    // means these can be used when creating customers using Customer::create
     // columns in table 'customer'
     protected $fillable = [
-        // 'username',
+        'username',
         'token'
         // 'funds',
         // 'payment_terms'

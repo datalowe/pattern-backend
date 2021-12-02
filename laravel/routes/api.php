@@ -10,6 +10,7 @@ use App\Models\City; // City class
 use App\Models\Logg; // Logg class
 
 use App\Http\Controllers\Sctr\OAuthController;
+use App\Http\Controllers\Sctr\ScooterController;
 
 // OAuth
 use Laravel\Socialite\Facades\Socialite;
@@ -33,12 +34,6 @@ Route::put('/admin/{id}',
 
 
 ////////// USERS //////////
-
-
-
-
-
-
 Route::get('/users', function () {
     return Customer::all();
 });
@@ -74,16 +69,7 @@ Route::put('/users/{id}',
 
 
 ////////// SCOOTERS //////////
-Route::get('/scooters', function (Request $req) {
-    // NOTE NEW! Filtering based on who requested the data (customers
-    // only get active scooters) TODO ensure that correct filtering
-    // is applied for customers (more criteria needed? might be appropriate
-    // to create a custom method on Scooter class if filtering becomes complex)
-    if (Customer::isCustomerReq($req)) {
-        return Scooter::where('status', 'active')->get();
-    }
-    return Scooter::all();
-});
+Route::get('/scooters', [ScooterController::class, 'getAllScooters']);
 
 Route::get('/scooters/{id}', function ($id) {
     return Scooter::where('id', $id)->get();
@@ -92,6 +78,11 @@ Route::get('/scooters/{id}', function ($id) {
 Route::put('/scooters/{id}',
     'App\Http\Controllers\Sctr\ScooterController@updateScooter'
 );
+
+Route::get('/scooter-client/scooters/', [ScooterController::class, 'getAllScooters']);
+Route::put('/scooter-client/scooters/{id}', [ScooterController::class, 'updateScooterCache']);
+
+Route::post('/scooter-client/scooters/flush-cache', [ScooterController::class, 'syncCacheWithDatabase']);
 //////////////////////////////
 
 

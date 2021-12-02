@@ -2,24 +2,31 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Cache;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
+
 
 use Tests\TestCase;
 
 use App\Models\Customer;
+use App\Models\Scooter;
 
 class ScooterTest extends TestCase
 {
     // Tell laravel to migrate the database before and after each test.
-    use RefreshDatabase;
+    use DatabaseMigrations;
 
     public function setUp(): void
     {
         parent::setUp();
         // use database/seeeders to fill the database with testing data
         $this->artisan('db:seed');
+        // clear cache
+        $this->artisan('cache:clear');
 
         $this->validCustomerUsername = 'customer-username';
         $this->validCustomerToken = 'customer-token';
@@ -59,5 +66,135 @@ class ScooterTest extends TestCase
                             ->etc()
                     )
         );
+    }
+
+    /**
+     * POST /api/scooter-client/scooters/flush-cache flushes cache to database 
+     */
+    public function testSyncCacheWithDatabase()
+    {
+        $putData = [
+            'id' => 1,
+            'customer_id' => 1,
+            'lat_pos' => 50,
+            'lon_pos' => 13,
+            'speed_kph' => 5,
+            'battery_level' => 50,
+            'status' => 'active'
+        ];
+        Cache::put('scooterNoStationCache', [$putData], 60000);
+
+        $response = $this->call(
+            'POST',
+            '/api/scooter-client/scooters/flush-cache',
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $updatedScooter = Scooter::firstWhere('id', 1);
+
+        $this->assertEquals($updatedScooter->battery_level, 50);
+    }
+
+    /**
+     * PUT /api/scooter-client/scooters/{id} updates cache and triggers
+     * cache to database flush when no previous
+     * request has been done (ie throttling isn't ongoing).
+     */
+    public function testUpdateScooterCache()
+    {
+        $updateScootedId = 1;
+        $sendData = [
+            'customer_id' => 1,
+            'lat_pos' => 50,
+            'lon_pos' => 13,
+            'speed_kph' => 5,
+            'battery_level' => 50,
+            'status' => 'active'
+        ];
+
+        $response = $this->call(
+            'PUT',
+            '/api/scooter-client/scooters/' . $updateScootedId,
+            $sendData
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $updatedScooter = Scooter::firstWhere('id', 1);
+
+        $this->assertEquals($updatedScooter->battery_level, 50);
+    }
+
+    /**
+     * PUT /api/scooter-client/scooters/{id} 3 times causes
+     * data to be saved in cache until POST to flush endpoint
+     * is done.
+     */
+    public function testUpdateScooterCacheMultiple()
+    {   
+        $updateScootedIds = [1, 2, 3];
+        $sendDataArrs = [
+            [
+                'customer_id' => 1,
+                'lat_pos' => 50,
+                'lon_pos' => 13,
+                'speed_kph' => 5,
+                'battery_level' => 50,
+                'status' => 'active'
+            ],
+            [
+                'customer_id' => 2,
+                'lat_pos' => 50,
+                'lon_pos' => 13,
+                'speed_kph' => 5,
+                'battery_level' => 50,
+                'status' => 'maintenance'
+            ],
+            [
+                'customer_id' => 3,
+                'station_id' => "setNull",
+                'lat_pos' => 50,
+                'lon_pos' => 13,
+                'speed_kph' => 5,
+                'battery_level' => 50,
+                'status' => 'active'
+            ]
+        ];
+
+        for ($x = 0; $x < 3; $x++) {
+            $response = $this->call(
+                'PUT',
+                '/api/scooter-client/scooters/' . $updateScootedIds[$x],
+                $sendDataArrs[$x]
+            );
+            $response
+                ->assertStatus(200);
+        } 
+
+        $updatedScooter1 = Scooter::firstWhere('id', 1);
+        $nonUpdatedScooter = Scooter::firstWhere('id', 2);
+
+        $this->assertEquals($updatedScooter1->battery_level, 50);
+        $this->assertNotEquals($nonUpdatedScooter->battery_level, 50);
+
+        $preFlushStationCache = Cache::get('scooterStationCache', []);
+        $preFlushNoStationCache = Cache::get('scooterNoStationCache', []);
+
+        $this->assertEquals($preFlushStationCache[0]['id'], 3);
+        $this->assertEquals($preFlushNoStationCache[0]['id'], 2);
+
+        $response = $this->call(
+            'POST',
+            '/api/scooter-client/scooters/flush-cache',
+        );
+
+        $response
+            ->assertStatus(200);
+        
+        $updatedScooter2 = Scooter::firstWhere('id', 2);
+        $this->assertEquals($updatedScooter2->battery_level, 50);
     }
 }

@@ -54,10 +54,12 @@ If pattern-db is updated in a manner which makes the migrations files outdated, 
 
 1. Delete all Laravel migrations files from 'laravel/database/migrations'.
 2. If there isn't already one running, start a MySQL container according to the instructions in 'pattern-db/README.md'.
-2. `cd` into the 'laravel' directory.
-3. Run `php artisan migrate:generate`.
+3. `cd` into the 'laravel' directory.
+4. Run `php artisan migrate:generate`.
 
 You should now see that new files have been generated in 'laravel/database/migrations'.
+
+5. (until we remove the view or find an alternate solution) Remove the migration file '...create_v_logg_view.php' because it otherwise causes issues when regenerating the database during feature tests.
 
 ## References
 Much of this project is likely to be inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo. We will probably want to be inspired also by [this additional guide on Laravel REST API's] by Fikayo Adepoju, since it discusses OAuth and specifically the Laravel Passport package in detail.

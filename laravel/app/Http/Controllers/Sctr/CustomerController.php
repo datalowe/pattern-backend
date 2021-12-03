@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Sctr;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer; // model of table
-use Illuminate\Http\Request; // for POST route
+use Illuminate\Http\Request;
+
+// for POST route
 
 class CustomerController extends Controller
 {
     public function addCustomer(Request $body) // $body contains key-value from POST
     {
-        $user = new Customer;
+        $user = new Customer();
 
         // add column in row if body contains value
         isset($body->username) ? $user->username = $body->username : null;

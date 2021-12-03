@@ -20,7 +20,8 @@ class Adm extends Model
         // 'token'
     ];
 
-    public static function isAdmReq(Request $req) {
+    public static function isAdmReq(Request $req)
+    {
         $token = $req->cookie('oauth_token');
 
         // check if user actually has 'oauth_token' cookie
@@ -34,7 +35,8 @@ class Adm extends Model
         return true;
     }
 
-    public static function reqToAdm(Request $req) {
+    public static function reqToAdm(Request $req)
+    {
         return self::firstWhere('token', $req->cookie('oauth_token'));
     }
 }

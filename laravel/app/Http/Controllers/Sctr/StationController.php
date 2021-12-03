@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Sctr;
 
 use App\Http\Controllers\Controller;
 use App\Models\Station; // model of table
-use Illuminate\Http\Request; // for POST route
+use Illuminate\Http\Request;
+
+// for POST route
 
 class StationController extends Controller
 {
@@ -27,5 +29,4 @@ class StationController extends Controller
         // update station
         $station->save();
     }
-
 }

@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Sctr;
 use Illuminate\Http\Request; // for POST route
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-
 use App\Http\Controllers\Controller;
 use App\Models\Scooter; // model of table
-use App\Models\Customer; // Customer class
+use App\Models\Customer;
+
+// Customer class
 
 class ScooterController extends Controller
 {
@@ -65,10 +66,10 @@ class ScooterController extends Controller
             $cacheColName = 'scooterNoStationCache';
         }
         $scooterCache = Cache::get($cacheColName, []);
-        
+
         foreach ($columns as $column => $value) {
             if ($value == "setNull") {
-                $columns[$column] = NULL;
+                $columns[$column] = null;
             }
         }
 

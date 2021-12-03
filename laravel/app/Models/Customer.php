@@ -23,7 +23,8 @@ class Customer extends Model
         // 'payment_terms'
     ];
 
-    public static function isCustomerReq(Request $req) {
+    public static function isCustomerReq(Request $req)
+    {
         $token = $req->cookie('oauth_token');
 
         // check if user actually has 'oauth_token' cookie
@@ -37,7 +38,8 @@ class Customer extends Model
         return true;
     }
 
-    public static function reqToCustomer(Request $req) {
+    public static function reqToCustomer(Request $req)
+    {
         return self::firstWhere('token', $req->cookie('oauth_token'));
     }
 }

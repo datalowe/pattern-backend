@@ -4,8 +4,10 @@ namespace App\Custom\Auth\Associate;
 
 use Illuminate\Http\Request;
 
-class Associate {
-    public function isAssociateReq(Request $req) {
+class Associate
+{
+    public function isAssociateReq(Request $req)
+    {
         // TODO change way that token is extracted - it shouldn't be stored
         // as a cookie, instead it should probably be plucked from a header
         // or something.

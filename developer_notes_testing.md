@@ -1,5 +1,12 @@
 # INSTRUCTIONS FOR TESTING ENVIRONMENT
 
+## Local environment
+https://dbwebb.se/uppgift/objektorientering-med-klasser-i-php
+
+Inside laravel folder, execute:
+- make install
+- make test
+
 ## Codesniffer
 https://github.com/squizlabs/PHP_CodeSniffer
 - phpcs tokenizes PHP, JS and CSS Files to detect code violations

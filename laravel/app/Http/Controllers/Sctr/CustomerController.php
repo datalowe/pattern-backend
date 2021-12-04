@@ -23,19 +23,19 @@ class CustomerController extends Controller
     }
 
     // $id from web.php contains city_id, $body contains key-value from POST
-    public function updateCustomer($id, Request $body)
+    public function updateCustomer($idNr, Request $body)
     {
         // find Customer by its primary key
-        $customer = Customer::find($id);
+        $user = Customer::find($idNr);
         // get all columns from request body
         $columns = $body->all();
         // iterate through all columns, replace value if column was found
         foreach ($columns as $column => $value) {
             // if value is "setNull", and column value is not already null, set it to null, otherwise nothing
             $value == "setNull" ? (
-                $body->$column != null ? $customer->$column = null : null
+                $body->$column != null ? $user->$column = null : null
                 // if not "setNull" is passed but another value, set column to that value
-            ) : $customer->$column = $value;
+            ) : $user->$column = $value;
         }
 
         // update user

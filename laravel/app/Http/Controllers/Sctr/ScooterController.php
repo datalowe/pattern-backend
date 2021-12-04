@@ -30,10 +30,10 @@ class ScooterController extends Controller
     }
 
     // $id from web.php contains scooter_id, $body contains key-value from POST
-    public function updateScooter($id, Request $body)
+    public function updateScooter($idNr, Request $body)
     {
         // find scooter by its primary key
-        $scooter = Scooter::find($id);
+        $scooter = Scooter::find($idNr);
         // get all columns from request body
         $columns = $body->all();
         // iterate through all columns, replace value if column was found
@@ -49,11 +49,11 @@ class ScooterController extends Controller
         $scooter->save();
     }
 
-    public function updateScooterCache($id, Request $body)
+    public function updateScooterCache($idNr, Request $body)
     {
         // get all columns from request body
         $columns = $body->all();
-        $columns['id'] = $id;
+        $columns['id'] = $idNr;
         // this branching is necessary because of how DB::table()->upsert() works (which is
         // used in syncCacheWithDatabase). when it updates/inserts multiple entries,
         // they must all have _values for the same keys/columns_. the scooter client

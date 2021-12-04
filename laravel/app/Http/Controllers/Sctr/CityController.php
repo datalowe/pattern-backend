@@ -11,10 +11,10 @@ use Illuminate\Http\Request;
 class CityController extends Controller
 {
     // $id from web.php contains scooter_id, $body contains key-value from POST
-    public function updateCity($id, Request $body)
+    public function updateCity($idNr, Request $body)
     {
         // find Station by its primary key
-        $city = City::find($id);
+        $city = City::find($idNr);
         // get all columns from request body
         $columns = $body->all();
         // iterate through all columns, replace value if column was found

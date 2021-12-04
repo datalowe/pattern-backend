@@ -1,4 +1,6 @@
 # SCTR backend
+[![datalowe](https://circleci.com/gh/datalowe/pattern-backend.svg?style=svg)](https://app.circleci.com/pipelines/github/datalowe/pattern-backend) [![Maintainability](https://api.codeclimate.com/v1/badges/ebb4a9890d243a29d6c8/maintainability)](https://codeclimate.com/github/datalowe/pattern-backend/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/ebb4a9890d243a29d6c8/test_coverage)](https://codeclimate.com/github/datalowe/pattern-backend/test_coverage)
+
 This repository is part of a group project done for the ['pattern' course](https://www.bth.se/utbildning/program-och-kurser/kurser/20232/BR4QJ/) at Blekinge Institute of Technology.
 
 This repository mainly consists of code for building a Docker container running a Laravel REST API server with a database. It includes a submodule 'pattern-db', based on [the SCTR database repository](https://github.com/joki20/pattern-db).

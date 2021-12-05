@@ -11,10 +11,10 @@ use Illuminate\Http\Request;
 class LoggController extends Controller
 {
     // $id from web.php contains logg_id, $body contains key-value from POST
-    public function updateLogg($id, Request $body)
+    public function updateLogg($idNr, Request $body)
     {
         // find Logg by its primary key
-        $logg = Logg::find($id);
+        $logg = Logg::find($idNr);
         // get all columns from request body
         $columns = $body->all();
         // iterate through all columns, replace value if column was found

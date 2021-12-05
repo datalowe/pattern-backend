@@ -12,10 +12,10 @@ class AdmController extends Controller
 {
 
     // $id from web.php contains city_id, $body contains key-value from POST
-    public function updateAdmin($id, Request $body)
+    public function updateAdmin($idNr, Request $body)
     {
         // find scooter by its primary key
-        $adm = Adm::find($id);
+        $adm = Adm::find($idNr);
 
         // update specific column in row if body contains key-value
         isset($body->username) ? $adm->username = $body->username : null; // assign $body->username

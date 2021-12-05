@@ -3,6 +3,8 @@
 ## Local environment
 https://dbwebb.se/uppgift/objektorientering-med-klasser-i-php
 
+You must have Xdebug or PCOV installed (can be installed with e. g. `pecl install xdebug`).
+
 Inside laravel folder, execute:
 - make install
 - make test

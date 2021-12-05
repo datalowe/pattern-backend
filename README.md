@@ -41,7 +41,9 @@ docker-compose down
 
 If you want to tidy up and remove the created images as well, run
 ```bash
-docker-compose down --rmi all
+# this leaves the redis image intact, since it's external and not affected
+# by changes in repo code
+docker-compose down --rmi local
 ```
 
 To force image rebuilds (to make app updates be reflected in Docker containers), run

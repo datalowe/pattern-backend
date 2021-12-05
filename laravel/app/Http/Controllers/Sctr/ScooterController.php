@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Sctr;
 
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\Request; // for POST route
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -65,17 +66,28 @@ class ScooterController extends Controller
         } else {
             $cacheColName = 'scooterNoStationCache';
         }
-        $scooterCache = Cache::get($cacheColName, []);
-
         foreach ($columns as $column => $value) {
             if ($value == "setNull") {
                 $columns[$column] = null;
             }
         }
 
-        $scooterCache = array_merge($scooterCache, [$columns]);
-        Cache::put($cacheColName, $scooterCache, 60000);
+        // try to access cache key/value, wait for max. 5s if it is currently being blocked
+        $lock = Cache::lock($cacheColName, 5);
 
+        try {
+            // lock the cache key/value to avoid race conditions (other requests coming
+            // in and changing the key's value before updates here have finished)
+            $lock->block(5);
+            $scooterCache = Cache::get($cacheColName, []);
+            $scooterCache = array_merge($scooterCache, [$columns]);
+            Cache::put($cacheColName, $scooterCache, 60000);
+        } catch (LockTimeoutException $e) {
+            $output = new \Symfony\Component\Console\Output\ConsoleOutput();
+            $output->writeln("failed to get lock");
+        } finally {
+            optional($lock)->release();
+        }
         // call function which checks if it's time to send cached updates to
         // database, and in that case sends them off
         $this->syncCacheWithDatabaseCheck();
@@ -94,16 +106,15 @@ class ScooterController extends Controller
     public function syncCacheWithDatabase()
     {
         foreach (['scooterStationCache', 'scooterNoStationCache'] as $colName) {
-            $cachedData = Cache::get($colName, []);
+            $cachedData = Cache::pull($colName, []);
             if (count($cachedData) == 0) {
                 continue;
             }
             DB::table('scooter')->upsert(
-                Cache::get($colName, []),
+                $cachedData,
                 ['id'],
                 array_keys($cachedData[0])
             );
-            Cache::put($colName, [], 60000);
         }
         $currentTime = time();
         Cache::put('lastCacheSendTime', $currentTime, 60000);

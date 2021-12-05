@@ -7,41 +7,6 @@ Inside laravel folder, execute:
 - make install
 - make test
 
-## Codesniffer
-https://github.com/squizlabs/PHP_CodeSniffer
-- phpcs tokenizes PHP, JS and CSS Files to detect code violations
-- phpcbf corrects code violations
-
-1. Download phar files into folder pattern-backend/laravel
-curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
-curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar
-
-2. Add following dependency to laravel/composer.json
-
-{
-    "require-dev": {
-        "squizlabs/php_codesniffer": "3.*"
-    }
-}
-
-3. Update and install dependencies
-- composer update - update dependencies
-- composer install - install dependencies into vendor folder
-
-4. Run codesniffer from vendor/bin directory:
-./vendor/bin/phpcs -h
-./vendor/bin/phpcbf -h
-
-5. Check code for files or directories, i.e. app folder
-- ./vendor/bin/phpcs app
-
-Use --standard=PSR12 if you want to check against PSR-12 coding standard:
-- ./vendor/bin/phpcs --standard=PSR12 app
-- ./vendor/bin/phpcs --standard=PSR12 routes
-
-- ./vendor/bin/phpcbf --standard=PSR12 app
-- ./vendor/bin/phpcbf --standard=PSR12 routes
-
 ## Overview Laravel testing
 https://laravel.com/docs/8.x/testing
 

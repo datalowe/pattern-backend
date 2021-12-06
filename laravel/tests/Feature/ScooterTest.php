@@ -69,6 +69,90 @@ class ScooterTest extends TestCase
     }
 
     /**
+     * GET /api/scooters/{id} as customer returns single scooter.
+     */
+    public function testSingleScooterCustomer()
+    {
+        $response = $this->call(
+            'GET',
+            '/api/scooters/1',
+            [],
+            ['oauth_token' => $this->validCustomerToken]
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $response
+            ->assertJson(fn (AssertableJson $json) => 
+                $json
+                ->has(1)
+                ->first(fn ($json) =>
+                    $json
+                        ->where('id', 1)
+                        ->etc()
+                )
+        );
+    }
+
+    /**
+    * GET /api/scooter-client/scooters as scooter simulator returns all scooters.
+    */
+    public function testScootersSimulator()
+    {
+        $response = $this->call(
+            'GET',
+            '/api/scooter-client/scooters',
+            [],
+            []
+        );
+
+        $response
+            ->assertStatus(200);
+        
+        // there should 4 scooters, since the scooter seeder
+        // creates 4, and simulator should get access to all of them.
+        $response
+            ->assertJson(fn (AssertableJson $json) => 
+                $json
+                    ->has(4)
+                    ->first(fn ($json) =>
+                        $json
+                            ->where('id', 1)
+                            ->where('city_id', 1)
+                            ->etc()
+                    )
+        );
+    }
+
+    /**
+     * GET /api/scooter-client/scooters/{id} as scooter simulator returns single scooter.
+     */
+    public function testSingleScooterSimulator()
+    {
+        $response = $this->call(
+            'GET',
+            '/api/scooter-client/scooters/1',
+            [],
+            []
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $response
+            ->assertJson(fn (AssertableJson $json) => 
+                $json
+                ->has(1)
+                ->first(fn ($json) =>
+                    $json
+                        ->where('id', 1)
+                        ->etc()
+                )
+        );
+    }
+
+    /**
      * POST /api/scooter-client/scooters/flush-cache flushes cache to database 
      */
     public function testSyncCacheWithDatabase()

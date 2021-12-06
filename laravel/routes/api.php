@@ -73,16 +73,17 @@ Route::put(
 ////////// SCOOTERS //////////
 Route::get('/scooters', [ScooterController::class, 'getAllScooters']);
 
-Route::get('/scooters/{id}', function ($id) {
-    return Scooter::where('id', $id)->get();
-});
+Route::get('/scooters/{id}', [ScooterController::class, 'getSingleScooter']);
 
 Route::put(
     '/scooters/{id}',
     'App\Http\Controllers\Sctr\ScooterController@updateScooter'
 );
 
+// routes specifically for use by scooter client/simulator //
 Route::get('/scooter-client/scooters/', [ScooterController::class, 'getAllScooters']);
+Route::get('/scooter-client/scooters/{id}', [ScooterController::class, 'getSingleScooter']);
+
 Route::put('/scooter-client/scooters/{id}', [ScooterController::class, 'updateScooterCache']);
 
 Route::post('/scooter-client/scooters/flush-cache', [ScooterController::class, 'syncCacheWithDatabase']);

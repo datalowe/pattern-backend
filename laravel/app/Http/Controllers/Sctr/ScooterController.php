@@ -18,6 +18,11 @@ class ScooterController extends Controller
     // between scooter update cache and database scooter table
     private static $cacheSendLatency = 5;
 
+    public function getSingleScooter($id)
+    {
+        return Scooter::where('id', $id)->get();
+    }
+
     public function getAllScooters(Request $req)
     {
         // NOTE NEW! Filtering based on who requested the data (customers

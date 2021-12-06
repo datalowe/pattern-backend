@@ -23,7 +23,9 @@ return [
         'http://localhost:8000',
         'http://localhost:4200',
         'http://localhost:4201',
-        'http://localhost:4202'
+        'http://localhost:4202',
+        'http://localhost:4203',
+        'http://localhost:5000'
     ],
 
     'allowed_origins_patterns' => [],

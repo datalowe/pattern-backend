@@ -84,23 +84,23 @@ class OAuthController extends Controller
         return response(
             'Hej ' . $user->getNickName() . '! Du är nu inloggad som admin via GitHub. 
             Vänligen stäng den här fliken och återvänd till admingränssnittet.'
-        )->cookie('oauth_token', $user->token, $user->expiresIn / 60);
+        )->cookie('admin_oauth_token', $user->token, $user->expiresIn / 60);
     }
 
     public function checkUserType(Request $req)
     {
-        if (Customer::isCustomerReq($req)) {
-            $customer = Customer::reqToCustomer($req);
-            return response()->json([
-                'user_type' => 'customer',
-                'id' => $customer->id
-            ]);
-        }
         if (Adm::isAdmReq($req)) {
             $adm = Adm::reqToAdm($req);
             return response()->json([
                 'user_type' => 'admin',
                 'id' => $adm->id
+            ]);
+        }
+        if (Customer::isCustomerReq($req)) {
+            $customer = Customer::reqToCustomer($req);
+            return response()->json([
+                'user_type' => 'customer',
+                'id' => $customer->id
             ]);
         }
         return response()->json([

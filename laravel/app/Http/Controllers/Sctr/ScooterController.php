@@ -18,6 +18,11 @@ class ScooterController extends Controller
     // between scooter update cache and database scooter table
     private static $cacheSendLatency = 5;
 
+    public function getSingleScooter($id)
+    {
+        return Scooter::where('id', $id)->get();
+    }
+
     public function getAllScooters(Request $req)
     {
         // NOTE NEW! Filtering based on who requested the data (customers
@@ -106,7 +111,7 @@ class ScooterController extends Controller
     public function syncCacheWithDatabase()
     {
         foreach (['scooterStationCache', 'scooterNoStationCache'] as $colName) {
-            $cachedData = Cache::pull($colName, []);
+            $cachedData = self::pullCacheWithLock($colName, []);
             if (count($cachedData) == 0) {
                 continue;
             }
@@ -118,5 +123,21 @@ class ScooterController extends Controller
         }
         $currentTime = time();
         Cache::put('lastCacheSendTime', $currentTime, 60000);
+    }
+
+    private static function pullCacheWithLock($keyName)
+    {
+        $lock = Cache::lock($keyName, 5);
+        $cachedData = [];
+        try {
+            $lock->block(5);
+            $cachedData = Cache::pull($keyName, []);
+        } catch (LockTimeoutException $e) {
+            $output = new \Symfony\Component\Console\Output\ConsoleOutput();
+            $output->writeln("failed to get lock");
+        } finally {
+            optional($lock)->release();
+            return $cachedData;
+        }
     }
 }

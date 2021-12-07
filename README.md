@@ -78,7 +78,7 @@ The following routes are used for this project:
 | /scooters                   | Get all scooters                                                        |                                     |                                                              |
 | /scooters/{id}              | Get single scooter                                                      |                                     | Update single scooter i.e. status, användare and batterinivå |
 | /stations                   | Get all parking spaces and charge stations including their positions    |                                     |                                                              |
-| /stations/{id}              | Get single parking space or charge station including its position       |                                     | Update single station i.e. when repositioning                |
+| /stations/{id}              | Get single parking space or charge station including its position       |                                     |                                                              |
 | /stations/{id}/scooters     | Get all scooters connected to specific parking space or charge station  |                                     |                                                              |
 | /cities                     | Get all cities                                                          |                                     |                                                              |
 | /cities{id}                 | Get single city                                                         |                                     |                                                              |
@@ -89,7 +89,6 @@ The following routes are used for this project:
 | /auth/github/redirect/admin | Returns a github login url for admin                                    |                                     |                                                              |
 | /auth/github/callback/admin | Sends admin to this callback route endpoint by github                   |                                     |                                                              |
 | /auth/github/check-usertype | Checks if user is logged in with OAuth, and if so, as admin or customer |                                     |                                                              |
-
 
 </div>
 

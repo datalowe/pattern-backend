@@ -66,27 +66,30 @@ You should now see that new files have been generated in 'laravel/database/migra
 5. (until we remove the view or find an alternate solution) Remove the migration file '...create_v_logg_view.php' because it otherwise causes issues when regenerating the database during feature tests.
 
 ## Rest API Details
-Following routes are used for this project:
+The following routes are used for this project:
 
 <div class="routesTable">
 
-| Endpoint /api...        | GET                                                                    | POST                                | PUT                                                          |
-|-------------------------|------------------------------------------------------------------------|-------------------------------------|--------------------------------------------------------------|
-| /admin/{id}             |                                                                        |                                     | Update single admin                                          |
-| /users                  | Get all users                                                          | Add new user                        |                                                              |
-| /users/{id}             | Get single customer                                                    |                                     | Update single customer i.e. saldo and payment_terms          |
-| /users/{id}/logs        | Get all travel logs of single customer                                 |                                     |                                                              |
-| /scooters               | Get all scooters                                                       |                                     |                                                              |
-| /scooters/{id}          | Get single scooter                                                     |                                     | Update single scooter i.e. status, användare and batterinivå |
-| /stations               | Get all parking spaces and charge stations including their positions   |                                     |                                                              |
-| /stations/{id}          | Get single parking space or charge station including its position      |                                     | Update single station i.e. when repositioning                |
-| /stations/{id}/scooters | Get all scooters connected to specific parking space or charge station |                                     |                                                              |
-| /cities                 | Get all cities                                                         |                                     |                                                              |
-| /cities{id}             | Get single city                                                        |                                     |                                                              |
-| /cities/{id}/scooters   | Get all scooters belonging to single city                              |                                     |                                                              |
-| /cities/{id}/stations   | Get all parking spaces and charging stations belonging to single city  |                                     |                                                              |
-| /logs                   | Get all travel logs                                                    | Add new travel log when trip starts |                                                              |
-| /logs/{id}              | Get single travel log                                                  |                                     | Update single travel log when trip is done                   |
+| Endpoint /api...            | GET                                                                     | POST                                | PUT                                                          |
+|-----------------------------|-------------------------------------------------------------------------|-------------------------------------|--------------------------------------------------------------|
+| /users                      | Get all users                                                           | Add new user                        |                                                              |
+| /users/{id}                 | Get single customer                                                     |                                     | Update single customer i.e. saldo and payment_terms          |
+| /users/{id}/logs            | Get all travel logs of single customer                                  |                                     |                                                              |
+| /scooters                   | Get all scooters                                                        |                                     |                                                              |
+| /scooters/{id}              | Get single scooter                                                      |                                     | Update single scooter i.e. status, användare and batterinivå |
+| /stations                   | Get all parking spaces and charge stations including their positions    |                                     |                                                              |
+| /stations/{id}              | Get single parking space or charge station including its position       |                                     | Update single station i.e. when repositioning                |
+| /stations/{id}/scooters     | Get all scooters connected to specific parking space or charge station  |                                     |                                                              |
+| /cities                     | Get all cities                                                          |                                     |                                                              |
+| /cities{id}                 | Get single city                                                         |                                     |                                                              |
+| /cities/{id}/scooters       | Get all scooters belonging to single city                               |                                     |                                                              |
+| /cities/{id}/stations       | Get all parking spaces and charging stations belonging to single city   |                                     |                                                              |
+| /auth/github/redirect       | Returns a github login url for user                                     | Add new travel log when trip starts |                                                              |
+| /auth/github/callback       | Sends user to this callback route endpoint by github                    |                                     |                                                              |
+| /auth/github/redirect/admin | Returns a github login url for admin                                    |                                     |                                                              |
+| /auth/github/callback/admin | Sends admin to this callback route endpoint by github                   |                                     |                                                              |
+| /auth/github/check-usertype | Checks if user is logged in with OAuth, and if so, as admin or customer |                                     |                                                              |
+
 
 </div>
 

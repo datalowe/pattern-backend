@@ -24,14 +24,6 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-////////// ADMIN //////////
-Route::put(
-    '/admin/{id}',
-    'App\Http\Controllers\Sctr\AdmController@updateAdmin'
-);
-///////////////////////////
-
-
 ////////// USERS //////////
 Route::get('/users', function () {
     return Customer::all();
@@ -58,10 +50,10 @@ Route::get('/users/{id}/logs', function ($id) {
         ]);
 });
 
-Route::post(
-    '/users',
-    'App\Http\Controllers\Sctr\CustomerController@addCustomer'
-);
+// Route::post(
+//     '/users',
+//     'App\Http\Controllers\Sctr\CustomerController@addCustomer'
+// );
 
 Route::put(
     '/users/{id}',
@@ -103,10 +95,6 @@ Route::get('/stations/{id}/scooters', function ($id) {
     return Scooter::where('station_id', $id)->get();
 });
 
-Route::put(
-    '/stations/{id}',
-    'App\Http\Controllers\Sctr\StationController@updateStation'
-);
 //////////////////////////////
 
 
@@ -133,21 +121,6 @@ Route::put(
 );
 ////////////////////////////
 
-
-////////// LOGGAR //////////
-Route::get('/logs', function () {
-    return Logg::all();
-});
-
-Route::get('/logs/{id}', function ($id) {
-    return Logg::where('id', $id)->get();
-});
-
-Route::put(
-    '/logs/{id}',
-    'App\Http\Controllers\Sctr\LoggController@updateLogg'
-);
-////////////////////////////
 
 ////////// CUSTOMER OAUTH //////////
 

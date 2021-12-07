@@ -134,6 +134,10 @@ Route::get('/logs', function () {
     ]);
 });
 
+Route::put(
+    '/logs/{id}',
+    'App\Http\Controllers\Sctr\LoggController@updateLogg'
+);
 
 ////////////////////////////
 

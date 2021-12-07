@@ -65,5 +65,30 @@ You should now see that new files have been generated in 'laravel/database/migra
 
 5. (until we remove the view or find an alternate solution) Remove the migration file '...create_v_logg_view.php' because it otherwise causes issues when regenerating the database during feature tests.
 
+## Rest API Details
+Following routes are used for this project:
+
+<div class="routesTable">
+
+| Endpoint /api...        | GET                                                                    | POST                                | PUT                                                          |
+|-------------------------|------------------------------------------------------------------------|-------------------------------------|--------------------------------------------------------------|
+| /admin/{id}             |                                                                        |                                     | Update single admin                                          |
+| /users                  | Get all users                                                          | Add new user                        |                                                              |
+| /users/{id}             | Get single customer                                                    |                                     | Update single customer i.e. saldo and payment_terms          |
+| /users/{id}/logs        | Get all travel logs of single customer                                 |                                     |                                                              |
+| /scooters               | Get all scooters                                                       |                                     |                                                              |
+| /scooters/{id}          | Get single scooter                                                     |                                     | Update single scooter i.e. status, användare and batterinivå |
+| /stations               | Get all parking spaces and charge stations including their positions   |                                     |                                                              |
+| /stations/{id}          | Get single parking space or charge station including its position      |                                     | Update single station i.e. when repositioning                |
+| /stations/{id}/scooters | Get all scooters connected to specific parking space or charge station |                                     |                                                              |
+| /cities                 | Get all cities                                                         |                                     |                                                              |
+| /cities{id}             | Get single city                                                        |                                     |                                                              |
+| /cities/{id}/scooters   | Get all scooters belonging to single city                              |                                     |                                                              |
+| /cities/{id}/stations   | Get all parking spaces and charging stations belonging to single city  |                                     |                                                              |
+| /logs                   | Get all travel logs                                                    | Add new travel log when trip starts |                                                              |
+| /logs/{id}              | Get single travel log                                                  |                                     | Update single travel log when trip is done                   |
+
+</div>
+
 ## References
 Much of this project is likely to be inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo. We will probably want to be inspired also by [this additional guide on Laravel REST API's] by Fikayo Adepoju, since it discusses OAuth and specifically the Laravel Passport package in detail.

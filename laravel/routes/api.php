@@ -124,8 +124,16 @@ Route::put(
 ////////// LOGGAR //////////
 
 Route::get('/logs', function () {
-    return Logg::all();
+    return DB::table('logg')
+    ->leftjoin('customer', 'logg.customer_id', '=', 'customer.id')
+    ->orderBy('logg.id', 'asc')
+    ->get([
+        'logg.*',
+        'customer.username',
+        'customer.payment_terms'
+    ]);
 });
+
 
 ////////////////////////////
 

@@ -9,11 +9,17 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 
+use Illuminate\Contracts\Cache\LockTimeoutException;
 
 use Tests\TestCase;
 
+use Mockery\MockInterface;
+
+use App\Models\Adm;
 use App\Models\Customer;
 use App\Models\Scooter;
+
+use App\Http\Controllers\Sctr\ScooterController;
 
 class ScooterTest extends TestCase
 {
@@ -36,6 +42,14 @@ class ScooterTest extends TestCase
             'username' => $this->validCustomerUsername,
             'token' => $this->validCustomerToken
         ]);
+
+        $this->validAdmUsername = 'adm-username';
+        $this->validAdmToken = 'adm-token';
+        // create valid admin
+        $validAdm = new Adm;
+        $validAdm->username = $this->validAdmUsername;
+        $validAdm->token = $this->validAdmToken;
+        $validAdm->save();
     }
 
     /**
@@ -153,6 +167,36 @@ class ScooterTest extends TestCase
     }
 
     /**
+     * PUT /api/scooters/{id} updates scooter.
+     */
+    public function testUpdateScooterAdmin()
+    {
+        $updateScootedId = 1;
+        $sendData = [
+            'customer_id' => 'setNull',
+            'lat_pos' => 50,
+            'lon_pos' => 13,
+            'speed_kph' => 5,
+            'battery_level' => 50,
+            'status' => 'active'
+        ];
+
+        $response = $this->call(
+            'PUT',
+            '/api/scooters/' . $updateScootedId,
+            $sendData,
+            ['admin_oauth_token' => $this->validAdmToken]
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $updatedScooter = Scooter::firstWhere('id', 1);
+
+        $this->assertEquals($updatedScooter->battery_level, 50);
+    }
+
+    /**
      * POST /api/scooter-client/scooters/flush-cache flushes cache to database 
      */
     public function testSyncCacheWithDatabase()
@@ -210,6 +254,49 @@ class ScooterTest extends TestCase
         $updatedScooter = Scooter::firstWhere('id', 1);
 
         $this->assertEquals($updatedScooter->battery_level, 50);
+    }
+
+    /**
+     * PUT /api/scooter-client/scooters/{id} tries to update cache but
+     * skips doing so if the cache is being blocked by another request process/thread.
+     */
+    public function testUpdateScooterCacheBlocked()
+    {
+        $updateScootedId = 1;
+        $sendData = [
+            'customer_id' => 1,
+            'status' => 'active'
+        ];
+
+        $lockMock = $this->mock(Service::class, function (MockInterface $mock) {
+            $mock->shouldReceive('block')->once()->andThrow(new LockTimeoutException);
+            $mock->shouldReceive('release')->once();
+        });
+
+        Cache::shouldReceive('lock')
+            ->once()
+            ->with('scooterNoStationCache-lock', 5)
+            ->andReturn($lockMock);
+
+        // return a very high/'late' last cache send time to ensure that no
+        // attempt at flushing to database is done
+        Cache::shouldReceive('get')
+            ->once()
+            ->with('lastCacheSendTime', 0)
+            ->andReturn(999999999999);
+
+        $response = $this->call(
+            'PUT',
+            '/api/scooter-client/scooters/' . $updateScootedId,
+            $sendData
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $nonUpdatedScooter = Scooter::firstWhere('id', 1);
+
+        $this->assertNotEquals($nonUpdatedScooter->customer_id, 1);
     }
 
     /**
@@ -280,5 +367,24 @@ class ScooterTest extends TestCase
         
         $updatedScooter2 = Scooter::firstWhere('id', 2);
         $this->assertEquals($updatedScooter2->battery_level, 50);
+    }
+
+    /**
+     * calling pullCacheWithLock when cache is being blocked by other thread/process
+     * results in empty array being returned and database not being synced
+     */
+    public function testPullCacheWithLockBlocked()
+    {
+        $lockMock = $this->mock(Service::class, function (MockInterface $mock) {
+            $mock->shouldReceive('block')->andThrow(new LockTimeoutException);
+            $mock->shouldReceive('release');
+        });
+
+        Cache::shouldReceive('lock')
+            ->andReturn($lockMock);
+        
+        Cache::shouldReceive('put');
+        
+        ScooterController::syncCacheWithDatabase();
     }
 }

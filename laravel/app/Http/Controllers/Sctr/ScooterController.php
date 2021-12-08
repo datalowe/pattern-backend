@@ -108,7 +108,7 @@ class ScooterController extends Controller
         }
     }
 
-    public function syncCacheWithDatabase()
+    public static function syncCacheWithDatabase()
     {
         foreach (['scooterStationCache', 'scooterNoStationCache'] as $colName) {
             $cachedData = self::pullCacheWithLock($colName, []);

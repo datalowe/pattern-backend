@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Scooter;
+use App\Models\Station;
+
 class City extends Model
 {
     protected $table = 'city'; // table name
@@ -19,4 +22,14 @@ class City extends Model
         'lon_center',
         'radius'
     ];
+
+    public function scooters()
+    {
+        return $this->hasMany(Scooter::class);
+    }
+
+    public function stations()
+    {
+        return $this->hasMany(Station::class);
+    }
 }

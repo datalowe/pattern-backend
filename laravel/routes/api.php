@@ -8,6 +8,7 @@ use App\Models\Station; // Station class
 use App\Models\City; // City class
 use App\Models\Logg; // Logg class
 
+use App\Http\Controllers\Sctr\CityController;
 use App\Http\Controllers\Sctr\OAuthController;
 use App\Http\Controllers\Sctr\ScooterController;
 // OAuth
@@ -99,26 +100,15 @@ Route::get('/stations/{id}/scooters', function ($id) {
 
 
 ////////// CITIES //////////
-Route::get('/cities', function () {
-    return City::all();
-});
+Route::get('/cities', [CityController::class, 'getAllCities']);
 
-Route::get('/cities/{id}', function ($id) {
-    return City::where('id', $id)->get();
-});
+Route::get('/cities/{id}', [CityController::class, 'getSingleCity']);
 
-Route::get('/cities/{id}/scooters', function ($id) {
-    return Scooter::where('city_id', $id)->get();
-});
+Route::get('/cities/{id}/scooters', [CityController::class, 'getLinkedScooters']);
 
-Route::get('/cities/{id}/stations', function ($id) {
-    return Station::where('city_id', $id)->get();
-});
+Route::get('/cities/{id}/stations', [CityController::class, 'getLinkedStations']);
 
-Route::put(
-    '/cities/{id}',
-    'App\Http\Controllers\Sctr\CityController@updateCity'
-);
+Route::put('/cities/{id}', [CityController::class, 'updateCity']);
 ////////////////////////////
 
 ////////// LOGGAR //////////

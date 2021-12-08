@@ -29,4 +29,24 @@ class CityController extends Controller
         // update city
         $city->save();
     }
+
+    public function getAllCities()
+    {
+        return City::all();
+    }
+
+    public function getSingleCity($id)
+    {
+        return City::where('id', $id)->get();
+    }
+
+    public function getLinkedScooters($id)
+    {
+        return City::find($id)->scooters;
+    }
+
+    public function getLinkedStations($id)
+    {
+        return City::find($id)->stations;
+    }
 }

@@ -78,7 +78,7 @@ class ScooterController extends Controller
         }
 
         // try to access cache key/value, wait for max. 5s if it is currently being blocked
-        $lock = Cache::lock($cacheColName, 5);
+        $lock = Cache::lock($cacheColName . "-lock", 5);
 
         try {
             // lock the cache key/value to avoid race conditions (other requests coming
@@ -127,7 +127,7 @@ class ScooterController extends Controller
 
     private static function pullCacheWithLock($keyName)
     {
-        $lock = Cache::lock($keyName, 5);
+        $lock = Cache::lock($keyName . "-lock", 5);
         $cachedData = [];
         try {
             $lock->block(5);

@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Support\Facades\Cache;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -120,30 +118,4 @@ class StationTest extends TestCase
                     )
         );
     }
-
-    // /**
-    //  * PUT /api/stations/{id} as admin updates station.
-    //  */
-    // public function testUpdateStationAdmin()
-    // {
-    //     $stationId = 1;
-    //     $sendData = [
-    //         'name' => 'Skövdelina',
-    //         'radius' => 7,
-    //         'lat_center' => 'setNull'
-    //     ];
-    //     $response = $this->call(
-    //         'PUT',
-    //         '/api/stations/' . $stationId,
-    //         $sendData,
-    //         ['admin_oauth_token' => $this->validAdmToken]
-    //     );
-
-    //     $response
-    //         ->assertStatus(200);
-        
-    //     $updatedStation = Station::firstWhere('id', 1);
-
-    //     $this->assertEquals($updatedStation->radius, $sendData['radius']);
-    // }
 }

@@ -69,10 +69,7 @@ Route::get('/scooters', [ScooterController::class, 'getAllScooters']);
 
 Route::get('/scooters/{id}', [ScooterController::class, 'getSingleScooter']);
 
-Route::put(
-    '/scooters/{id}',
-    'App\Http\Controllers\Sctr\ScooterController@updateScooter'
-);
+Route::put('/scooters/{id}', [ScooterController::class, 'updateScooter']);
 
 // routes specifically for use by scooter client/simulator //
 Route::get('/scooter-client/scooters/', [ScooterController::class, 'getAllScooters']);

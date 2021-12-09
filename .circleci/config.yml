@@ -5,6 +5,8 @@ version: 2
 
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: 9e49162df0d6eb2bbed504c4101088ed707efb872b469e5dae66396e0058b508
     docker:
       - image: circleci/php:8.0.11-node-browsers
         environment: 
@@ -70,5 +72,15 @@ jobs:
           command: |
             php artisan migrate
       - run:
-          name: "Run Tests"
-          command: ./vendor/bin/phpunit
+          name: Setup Code Climate test-reporter
+          command: |
+            # download test reporter as a static binary
+              curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+              chmod +x ./cc-test-reporter
+      - run:
+          name: "Run Tests" 
+          command: |
+            sudo docker-php-ext-enable xdebug
+            ./cc-test-reporter before-build
+            sudo XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-clover clover.xml --configuration .phpunit.xml
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?

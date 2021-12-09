@@ -35,18 +35,18 @@ class CityController extends Controller
         return City::all();
     }
 
-    public function getSingleCity($id)
+    public function getSingleCity($idNr)
     {
-        return City::where('id', $id)->get();
+        return City::where('id', $idNr)->get();
     }
 
-    public function getLinkedScooters($id)
+    public function getLinkedScooters($idNr)
     {
-        return City::find($id)->scooters;
+        return City::find($idNr)->scooters;
     }
 
-    public function getLinkedStations($id)
+    public function getLinkedStations($idNr)
     {
-        return City::find($id)->stations;
+        return City::find($idNr)->stations;
     }
 }

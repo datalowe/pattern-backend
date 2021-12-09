@@ -10,10 +10,10 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 use App\Models\Adm;
-use App\Models\City;
+use App\Models\Station;
 use App\Models\Scooter;
 
-class CityTest extends TestCase
+class StationTest extends TestCase
 {
     // Tell laravel to migrate the database before and after each test.
     use DatabaseMigrations;
@@ -36,13 +36,13 @@ class CityTest extends TestCase
     }
 
     /**
-    * GET /api/cities returns all cities for admin.
+    * GET /api/stations returns all stations for admin.
     */
-    public function testCitiesAdmin()
+    public function testStationsAdmin()
     {
         $response = $this->call(
             'GET',
-            '/api/cities',
+            '/api/stations',
             [],
             ['admin_oauth_token' => $this->validAdmToken]
         );
@@ -63,14 +63,14 @@ class CityTest extends TestCase
     }
 
     /**
-    * GET /api/cities/{id} returns single city's info for admin.
+    * GET /api/stations/{id} returns single station's info for admin.
     */
-    public function testSingleCityAdmin()
+    public function testSingleStationAdmin()
     {
-        $cityId = 1;
+        $stationId = 1;
         $response = $this->call(
             'GET',
-            '/api/cities/' . $cityId,
+            '/api/stations/' . $stationId,
             [],
             ['admin_oauth_token' => $this->validAdmToken]
         );
@@ -91,14 +91,14 @@ class CityTest extends TestCase
     }
 
     /**
-    * GET /api/cities/{id}/scooters returns all of a city's scooters for admin.
+    * GET /api/stations/{id}/scooters returns all of a station's scooters for admin.
     */
-    public function testSingleCityScootersAdmin()
+    public function testSingleStationScootersAdmin()
     {
-        $cityId = 1;
+        $stationId = 1;
         $response = $this->call(
             'GET',
-            '/api/cities/' . $cityId . '/scooters',
+            '/api/stations/' . $stationId . '/scooters',
             [],
             ['admin_oauth_token' => $this->validAdmToken]
         );
@@ -117,60 +117,5 @@ class CityTest extends TestCase
                             ->etc()
                     )
         );
-    }
-
-    /**
-    * GET /api/cities/{id}/stations returns all of a city's stations for admin.
-    */
-    public function testSingleCityStationsAdmin()
-    {
-        $cityId = 1;
-        $response = $this->call(
-            'GET',
-            '/api/cities/' . $cityId . '/stations',
-            [],
-            ['admin_oauth_token' => $this->validAdmToken]
-        );
-
-        $response
-            ->assertStatus(200);
-
-        $response
-            ->assertJson(fn (AssertableJson $json) => 
-                $json
-                    ->has(2)
-                    ->first(fn ($json) =>
-                        $json
-                            ->where('id', 1)
-                            ->where('location', 'Arena Skövde')
-                            ->etc()
-                    )
-        );
-    }
-
-    /**
-     * PUT /api/cities/{id} as admin updates city.
-     */
-    public function testUpdateCityAdmin()
-    {
-        $cityId = 1;
-        $sendData = [
-            'name' => 'Skövdelina',
-            'radius' => 7,
-            'lat_center' => 'setNull'
-        ];
-        $response = $this->call(
-            'PUT',
-            '/api/cities/' . $cityId,
-            $sendData,
-            ['admin_oauth_token' => $this->validAdmToken]
-        );
-
-        $response
-            ->assertStatus(200);
-        
-        $updatedCity = City::firstWhere('id', 1);
-
-        $this->assertEquals($updatedCity->radius, $sendData['radius']);
     }
 }

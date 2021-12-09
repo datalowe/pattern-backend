@@ -1,18 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Customer; // Customer class
-use App\Models\Scooter; // Scooter class
-use App\Models\Station; // Station class
-use App\Models\City; // City class
-use App\Models\Logg; // Logg class
 
 use App\Http\Controllers\Sctr\CityController;
+use App\Http\Controllers\Sctr\CustomerController;
+use App\Http\Controllers\Sctr\LoggController;
 use App\Http\Controllers\Sctr\OAuthController;
 use App\Http\Controllers\Sctr\ScooterController;
-// OAuth
-use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\Sctr\StationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,40 +21,13 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 ////////// USERS //////////
-Route::get('/users', function () {
-    return Customer::all();
-});
+Route::get('/users', [CustomerController::class, 'getAllCustomers']);
 
-Route::get('/users/{id}', function ($id) {
-    return Customer::where('id', $id)->get();
-});
+Route::get('/users/{id}', [CustomerController::class, 'getSingleCustomer']);
 
-Route::get('/users/{id}/logs', function ($id) {
-    return DB::table('customer')
-    ->join('logg', function ($join) use (&$id) {
- // 'use' accesses outer scope variable
-        $join->on('customer.id', '=', 'logg.customer_id')
-            ->select('customer.*', 'logg.*')
-            ->where('customer.id', $id);
-    })
-    ->get([
-        'customer.id',
-        'customer.username',
-        'customer.funds',
-        'customer.payment_terms',
-        'logg.*'
-        ]);
-});
+Route::get('/users/{id}/logs', [CustomerController::class, 'getCustomerWithLoggs']);
 
-// Route::post(
-//     '/users',
-//     'App\Http\Controllers\Sctr\CustomerController@addCustomer'
-// );
-
-Route::put(
-    '/users/{id}',
-    'App\Http\Controllers\Sctr\CustomerController@updateCustomer'
-);
+Route::put('/users/{id}', [CustomerController::class, 'updateCustomer']);
 ///////////////////////////
 
 
@@ -68,10 +36,7 @@ Route::get('/scooters', [ScooterController::class, 'getAllScooters']);
 
 Route::get('/scooters/{id}', [ScooterController::class, 'getSingleScooter']);
 
-Route::put(
-    '/scooters/{id}',
-    'App\Http\Controllers\Sctr\ScooterController@updateScooter'
-);
+Route::put('/scooters/{id}', [ScooterController::class, 'updateScooter']);
 
 // routes specifically for use by scooter client/simulator //
 Route::get('/scooter-client/scooters/', [ScooterController::class, 'getAllScooters']);
@@ -84,17 +49,11 @@ Route::post('/scooter-client/scooters/flush-cache', [ScooterController::class, '
 
 
 ////////// STATIONS //////////
-Route::get('/stations', function () {
-    return Station::all();
-});
+Route::get('/stations', [StationController::class, 'getAllStations']);
 
-Route::get('/stations/{id}', function ($id) {
-    return Station::where('id', $id)->get();
-});
+Route::get('/stations/{id}', [StationController::class, 'getSingleStation']);
 
-Route::get('/stations/{id}/scooters', function ($id) {
-    return Scooter::where('station_id', $id)->get();
-});
+Route::get('/stations/{id}/scooters', [StationController::class, 'getLinkedScooters']);
 
 //////////////////////////////
 
@@ -113,16 +72,7 @@ Route::put('/cities/{id}', [CityController::class, 'updateCity']);
 
 ////////// LOGGAR //////////
 
-Route::get('/logs', function () {
-    return DB::table('logg')
-    ->leftjoin('customer', 'logg.customer_id', '=', 'customer.id')
-    ->orderBy('logg.id', 'asc')
-    ->get([
-        'logg.*',
-        'customer.username',
-        'customer.payment_terms'
-    ]);
-});
+Route::get('/logs', [LoggController::class, 'getAllLogs']);
 
 ////////////////////////////
 

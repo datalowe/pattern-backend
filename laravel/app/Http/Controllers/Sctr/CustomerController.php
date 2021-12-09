@@ -6,20 +6,35 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer; // model of table
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+
 // for POST route
 
 class CustomerController extends Controller
 {
-    public function addCustomer(Request $body) // $body contains key-value from POST
+    public function getAllCustomers()
     {
-        $user = new Customer();
+        return Customer::all();
+    }
 
-        // add column in row if body contains value
-        isset($body->username) ? $user->username = $body->username : null;
-        isset($body->token) ? $user->token = $body->token : null;
+    public function getSingleCustomer($idNr)
+    {
+        return Customer::where('id', $idNr)->get();
+    }
 
-        // create new row
-        $user->save();
+    public function getCustomerWithLoggs($idNr)
+    {
+        return DB::table('customer')
+        ->where('customer.id', $idNr)
+        ->join('logg', 'customer.id', '=', 'logg.customer_id')
+        ->get([
+            'customer.id',
+            'customer.username',
+            'customer.funds',
+            'customer.payment_terms',
+            'logg.*'
+        ]);
     }
 
     // $id from web.php contains city_id, $body contains key-value from POST

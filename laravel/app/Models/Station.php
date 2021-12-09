@@ -21,4 +21,9 @@ class Station extends Model
         'radius',
         'type'
     ];
+
+    public function scooters()
+    {
+        return $this->hasMany(Scooter::class);
+    }
 }

@@ -51,6 +51,9 @@ To force image rebuilds (to make app updates be reflected in Docker containers),
 docker-compose build
 ```
 
+## Run tests
+Virtually all Laravel tests in this repo are so-called feature/integration tests and require that you've spun up the pattern-db database container (see 'Developer mode', step 1). Once you have a database container running, go to the Laravel directory and run `make install` (to ensure that you have all necessary local dependencies), then `make test`. Coverage reports are stored in 'laravel/build/coverage'. Note that all tests are continuously run through CircleCI (click the CircleCI badge at the top for details).
+
 ## Update database migration files
 Note that the pattern-db submodule is the single source of truth for what the database should 'really' be like, and as mentioned above, it's created and spun up separately from Laravel. However, it's useful to have Laravel database migration files for enabling database setup when testing. To this end, the [Laravel Migrations Generator](https://github.com/kitloong/laravel-migrations-generator) package is used to generate migrations files _based on the already existing MySQL (pattern-db) database_.
 
@@ -63,8 +66,6 @@ If pattern-db is updated in a manner which makes the migrations files outdated, 
 
 You should now see that new files have been generated in 'laravel/database/migrations'.
 
-5. (until we remove the view or find an alternate solution) Remove the migration file '...create_v_logg_view.php' because it otherwise causes issues when regenerating the database during feature tests.
-
 ## Rest API Details
 The following routes are used for this project:
 
@@ -72,7 +73,7 @@ The following routes are used for this project:
 
 | Endpoint /api...            | GET                                                                     | POST                                | PUT                                                          |
 |-----------------------------|-------------------------------------------------------------------------|-------------------------------------|--------------------------------------------------------------|
-| /users                      | Get all users                                                           | Add new user                        |                                                              |
+| /users                      | Get all users                                                           |                         |                                                              |
 | /users/{id}                 | Get single customer                                                     |                                     | Update single customer i.e. saldo and payment_terms          |
 | /users/{id}/logs            | Get all travel logs of single customer                                  |                                     |                                                              |
 | /scooters                   | Get all scooters                                                        |                                     |                                                              |
@@ -84,6 +85,7 @@ The following routes are used for this project:
 | /cities{id}                 | Get single city                                                         |                                     |                                                              |
 | /cities/{id}/scooters       | Get all scooters belonging to single city                               |                                     |                                                              |
 | /cities/{id}/stations       | Get all parking spaces and charging stations belonging to single city   |                                     |                                                              |
+| /logs                       | Get all trip logs                                                       |                         |                                                              |
 | /auth/github/redirect       | Returns a github login url for user                                     | Add new travel log when trip starts |                                                              |
 | /auth/github/callback       | Sends user to this callback route endpoint by github                    |                                     |                                                              |
 | /auth/github/redirect/admin | Returns a github login url for admin                                    |                                     |                                                              |
@@ -93,4 +95,4 @@ The following routes are used for this project:
 </div>
 
 ## References
-Much of this project is likely to be inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo. We will probably want to be inspired also by [this additional guide on Laravel REST API's] by Fikayo Adepoju, since it discusses OAuth and specifically the Laravel Passport package in detail.
+Some of this project has been inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo, but most of all we've made use of the [official Laravel documentation](https://laravel.com/docs/8.x/readme).

@@ -10,10 +10,9 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 use App\Models\Adm;
-use App\Models\City;
-use App\Models\Scooter;
+use App\Models\Customer;
 
-class CityTest extends TestCase
+class CustomerTest extends TestCase
 {
     // Tell laravel to migrate the database before and after each test.
     use DatabaseMigrations;
@@ -26,6 +25,21 @@ class CityTest extends TestCase
         // clear cache
         $this->artisan('cache:clear');
 
+        $this->validCustomerUsername4 = 'customer-username-4';
+        $this->validCustomerToken4 = 'customer-token-4';
+        // create valid customer (implicitly setting funds to 0
+        // and payment_terms to 'invoice')
+        Customer::create([
+            'username' => $this->validCustomerUsername4,
+            'token' => $this->validCustomerToken4
+        ]);
+        $this->validCustomerUsername5 = 'customer-username-5';
+        $this->validCustomerToken5 = 'customer-token-5';
+        Customer::create([
+            'username' => $this->validCustomerUsername5,
+            'token' => $this->validCustomerToken5
+        ]);
+
         $this->validAdmUsername = 'adm-username';
         $this->validAdmToken = 'adm-token';
         // create valid admin
@@ -36,13 +50,13 @@ class CityTest extends TestCase
     }
 
     /**
-    * GET /api/cities returns all cities for admin.
+    * GET /api/users returns all users for admin.
     */
-    public function testCitiesAdmin()
+    public function testCustomersAdmin()
     {
         $response = $this->call(
             'GET',
-            '/api/cities',
+            '/api/users',
             [],
             ['admin_oauth_token' => $this->validAdmToken]
         );
@@ -53,24 +67,54 @@ class CityTest extends TestCase
         $response
             ->assertJson(fn (AssertableJson $json) => 
                 $json
-                    ->has(3)
-                    ->first(fn ($json) =>
+                    ->has(5)
+                    ->has(3, fn ($json) =>
                         $json
-                            ->where('id', 1)
+                            ->where('id', 4)
+                            ->where('username', $this->validCustomerUsername4)
                             ->etc()
                     )
         );
     }
 
     /**
-    * GET /api/cities/{id} returns single city's info for admin.
+    * GET /api/users/{id} returns single customer's info for admin.
     */
-    public function testSingleCityAdmin()
+    public function testSingleCustomerAdmin()
     {
-        $cityId = 1;
+        $customerId = 5;
         $response = $this->call(
             'GET',
-            '/api/cities/' . $cityId,
+            '/api/users/' . $customerId,
+            [],
+            ['admin_oauth_token' => $this->validAdmToken]
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $response
+            ->assertJson(fn (AssertableJson $json) => 
+                $json
+                    ->has(1)
+                    ->first(fn ($json) =>
+                        $json
+                            ->where('id', 5)
+                            ->where('username', $this->validCustomerUsername5)
+                            ->etc()
+                    )
+        );
+    }
+
+    /**
+    * GET /api/users/{id} returns single customer's info for admin.
+    */
+    public function testSingleCustomersLogsAdmin()
+    {
+        $customerId = 1;
+        $response = $this->call(
+            'GET',
+            '/api/users/' . $customerId . '/logs',
             [],
             ['admin_oauth_token' => $this->validAdmToken]
         );
@@ -85,92 +129,36 @@ class CityTest extends TestCase
                     ->first(fn ($json) =>
                         $json
                             ->where('id', 1)
+                            ->where('start_cost', '20.00')
+                            ->where('username', 'customer1')
                             ->etc()
                     )
         );
     }
 
     /**
-    * GET /api/cities/{id}/scooters returns all of a city's scooters for admin.
+    * PUT /api/users/{id} as admin updates customer info
     */
-    public function testSingleCityScootersAdmin()
+    public function testSingleCustomerUpdateAdmin()
     {
-        $cityId = 1;
-        $response = $this->call(
-            'GET',
-            '/api/cities/' . $cityId . '/scooters',
-            [],
-            ['admin_oauth_token' => $this->validAdmToken]
-        );
-
-        $response
-            ->assertStatus(200);
-
-        $response
-            ->assertJson(fn (AssertableJson $json) => 
-                $json
-                    ->has(1)
-                    ->first(fn ($json) =>
-                        $json
-                            ->where('id', 1)
-                            ->where('customer_id', null)
-                            ->etc()
-                    )
-        );
-    }
-
-    /**
-    * GET /api/cities/{id}/stations returns all of a city's stations for admin.
-    */
-    public function testSingleCityStationsAdmin()
-    {
-        $cityId = 1;
-        $response = $this->call(
-            'GET',
-            '/api/cities/' . $cityId . '/stations',
-            [],
-            ['admin_oauth_token' => $this->validAdmToken]
-        );
-
-        $response
-            ->assertStatus(200);
-
-        $response
-            ->assertJson(fn (AssertableJson $json) => 
-                $json
-                    ->has(2)
-                    ->first(fn ($json) =>
-                        $json
-                            ->where('id', 1)
-                            ->where('location', 'Arena Skövde')
-                            ->etc()
-                    )
-        );
-    }
-
-    /**
-     * PUT /api/cities/{id} as admin updates city.
-     */
-    public function testUpdateCityAdmin()
-    {
-        $cityId = 1;
+        $customerId = 1;
         $sendData = [
-            'name' => 'Skövdelina',
-            'radius' => 7,
-            'lat_center' => 'setNull'
+            "token" => "setNull",
+            "funds" => 9001,
+            "payment_terms" => 'prepaid'
         ];
         $response = $this->call(
             'PUT',
-            '/api/cities/' . $cityId,
+            '/api/users/' . $customerId,
             $sendData,
             ['admin_oauth_token' => $this->validAdmToken]
         );
 
         $response
             ->assertStatus(200);
-        
-        $updatedCity = City::firstWhere('id', 1);
 
-        $this->assertEquals($updatedCity->radius, $sendData['radius']);
+        $updatedCustomer = Customer::find($customerId);
+
+        $this->assertEquals($updatedCustomer->payment_terms, 'prepaid');
     }
 }

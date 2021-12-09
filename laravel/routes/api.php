@@ -11,6 +11,7 @@ use App\Models\Logg; // Logg class
 use App\Http\Controllers\Sctr\CityController;
 use App\Http\Controllers\Sctr\OAuthController;
 use App\Http\Controllers\Sctr\ScooterController;
+use App\Http\Controllers\Sctr\StationController;
 // OAuth
 use Laravel\Socialite\Facades\Socialite;
 
@@ -84,17 +85,11 @@ Route::post('/scooter-client/scooters/flush-cache', [ScooterController::class, '
 
 
 ////////// STATIONS //////////
-Route::get('/stations', function () {
-    return Station::all();
-});
+Route::get('/stations', [StationController::class, 'getAllStations']);
 
-Route::get('/stations/{id}', function ($id) {
-    return Station::where('id', $id)->get();
-});
+Route::get('/stations/{id}', [StationController::class, 'getSingleStation']);
 
-Route::get('/stations/{id}/scooters', function ($id) {
-    return Scooter::where('station_id', $id)->get();
-});
+Route::get('/stations/{id}/scooters', [StationController::class, 'getLinkedScooters']);
 
 //////////////////////////////
 

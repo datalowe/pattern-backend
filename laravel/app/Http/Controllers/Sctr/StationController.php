@@ -10,23 +10,18 @@ use Illuminate\Http\Request;
 
 class StationController extends Controller
 {
-    // $id from api.php contains city_id, $body contains key-value from POST
-    public function updateStation($idNr, Request $body)
+    public function getAllStations()
     {
-        // find Station by its primary key
-        $station = Station::find($idNr);
-        // get all columns from request body
-        $columns = $body->all();
-        // iterate through all columns, replace value if column was found
-        foreach ($columns as $column => $value) {
-            // if value is "setNull", and column value is not already null, set it to null, otherwise nothing
-            $value == "setNull" ? (
-                $body->$column != null ? $station->$column = null : null
-                // if not "setNull" is passed but another value, set column to that value
-            ) : $station->$column = $value;
-        }
+        return Station::all();
+    }
 
-        // update station
-        $station->save();
+    public function getSingleStation($idNr)
+    {
+        return Station::where('id', $idNr)->get();
+    }
+
+    public function getLinkedScooters($idNr)
+    {
+        return Station::find($idNr)->scooters;
     }
 }

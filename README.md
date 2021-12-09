@@ -93,4 +93,4 @@ The following routes are used for this project:
 </div>
 
 ## References
-Much of this project is likely to be inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo. We will probably want to be inspired also by [this additional guide on Laravel REST API's] by Fikayo Adepoju, since it discusses OAuth and specifically the Laravel Passport package in detail.
+Some of this project has been inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo, but most of all we've made use of the [official Laravel documentation](https://laravel.com/docs/8.x/readme).

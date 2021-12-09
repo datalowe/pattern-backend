@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CitySeeder::class,
             CustomerSeeder::class,
-            ScooterSeeder::class,
-            StationSeeder::class
+            StationSeeder::class,
+            ScooterSeeder::class
         ]);
         // \App\Models\User::factory(10)->create();
     }

@@ -38,7 +38,7 @@ Route::middleware(['has.valid.token'])->group(function(){
     Route::get('/scooters/{id}', [ScooterController::class, 'getSingleScooter']);
 
     Route::put('/scooters/{id}', [ScooterController::class, 'updateScooter']);
-    
+
     ////////// STATIONS //////////
     Route::get('/stations', [StationController::class, 'getAllStations']);
 

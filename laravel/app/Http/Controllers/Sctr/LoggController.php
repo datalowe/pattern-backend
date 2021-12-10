@@ -16,11 +16,9 @@ class LoggController extends Controller
     {
         return DB::table('logg')
         ->leftjoin('customer', 'logg.customer_id', '=', 'customer.id')
+        ->select('logg.*', 'customer.username', 'customer.payment_terms')
+        ->whereNotNull('end_time')
         ->orderBy('logg.id', 'asc')
-        ->get([
-            'logg.*',
-            'customer.username',
-            'customer.payment_terms'
-        ]);
+        ->get();
     }
 }

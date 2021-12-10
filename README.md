@@ -71,26 +71,26 @@ The following routes are used for this project:
 
 <div class="routesTable">
 
-| Endpoint /api...            | GET                                                                     | POST                                | PUT                                                          |
-|-----------------------------|-------------------------------------------------------------------------|-------------------------------------|--------------------------------------------------------------|
-| /users                      | Get all users                                                           |                         |                                                              |
-| /users/{id}                 | Get single customer                                                     |                                     | Update single customer i.e. saldo and payment_terms          |
-| /users/{id}/logs            | Get all travel logs of single customer                                  |                                     |                                                              |
-| /scooters                   | Get all scooters                                                        |                                     |                                                              |
-| /scooters/{id}              | Get single scooter                                                      |                                     | Update single scooter i.e. status, användare and batterinivå |
-| /stations                   | Get all parking spaces and charge stations including their positions    |                                     |                                                              |
-| /stations/{id}              | Get single parking space or charge station including its position       |                                     |                                                              |
-| /stations/{id}/scooters     | Get all scooters connected to specific parking space or charge station  |                                     |                                                              |
-| /cities                     | Get all cities                                                          |                                     |                                                              |
-| /cities{id}                 | Get single city                                                         |                                     |                                                              |
-| /cities/{id}/scooters       | Get all scooters belonging to single city                               |                                     |                                                              |
-| /cities/{id}/stations       | Get all parking spaces and charging stations belonging to single city   |                                     |                                                              |
-| /logs                       | Get all trip logs                                                       |                         |                                                              |
-| /auth/github/redirect       | Returns a github login url for user                                     | Add new travel log when trip starts |                                                              |
-| /auth/github/callback       | Sends user to this callback route endpoint by github                    |                                     |                                                              |
-| /auth/github/redirect/admin | Returns a github login url for admin                                    |                                     |                                                              |
-| /auth/github/callback/admin | Sends admin to this callback route endpoint by github                   |                                     |                                                              |
-| /auth/github/check-usertype | Checks if user is logged in with OAuth, and if so, as admin or customer |                                     |                                                              |
+| Endpoint /api...            | GET                                                                     | POST | PUT                                                          |
+|-----------------------------|-------------------------------------------------------------------------|------|--------------------------------------------------------------|
+| /users                      | Get all users                                                           |      |                                                              |
+| /users/{id}                 | Get single customer                                                     |      | Update single customer i.e. funds and payment method         |
+| /users/{id}/logs            | Get all travel logs of single customer                                  |      |                                                              |
+| /scooters                   | Get all scooters                                                        |      |                                                              |
+| /scooters/{id}              | Get single scooter                                                      |      | Update single scooter i.e. status, user and battery level    |
+| /stations                   | Get all parking spaces and charge stations including their positions    |      |                                                              |
+| /stations/{id}              | Get single parking space or charge station including its position       |      |                                                              |
+| /stations/{id}/scooters     | Get all scooters connected to specific parking space or charge station  |      |                                                              |
+| /cities                     | Get all cities                                                          |      |                                                              |
+| /cities/{id}                | Get single city                                                         |      |                                                              |
+| /cities/{id}/scooters       | Get all scooters belonging to single city                               |      |                                                              |
+| /cities/{id}/stations       | Get all parking spaces and charging stations belonging to single city   |      |                                                              |
+| /logs                       | Get all trip logs                                                       |      |                                                              |
+| /auth/github/redirect       | Returns a github login url for user                                     |      |                                                              |
+| /auth/github/callback       | Sends user to this callback route endpoint by github                    |      |                                                              |
+| /auth/github/redirect/admin | Returns a github login url for admin                                    |      |                                                              |
+| /auth/github/callback/admin | Sends admin to this callback route endpoint by github                   |      |                                                              |
+| /auth/github/check-usertype | Checks if user is logged in with OAuth, and if so, as admin or customer |      |                                                              |
 
 </div>
 

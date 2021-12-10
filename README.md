@@ -74,10 +74,10 @@ The following routes are used for this project:
 | Endpoint /api...            | GET                                                                     | POST | PUT                                                          |
 |-----------------------------|-------------------------------------------------------------------------|------|--------------------------------------------------------------|
 | /users                      | Get all users                                                           |      |                                                              |
-| /users/{id}                 | Get single customer                                                     |      | Update single customer i.e. saldo and payment_terms          |
+| /users/{id}                 | Get single customer                                                     |      | Update single customer i.e. funds and payment method         |
 | /users/{id}/logs            | Get all travel logs of single customer                                  |      |                                                              |
 | /scooters                   | Get all scooters                                                        |      |                                                              |
-| /scooters/{id}              | Get single scooter                                                      |      | Update single scooter i.e. status, användare and batterinivå |
+| /scooters/{id}              | Get single scooter                                                      |      | Update single scooter i.e. status, user and battery level    |
 | /stations                   | Get all parking spaces and charge stations including their positions    |      |                                                              |
 | /stations/{id}              | Get single parking space or charge station including its position       |      |                                                              |
 | /stations/{id}/scooters     | Get all scooters connected to specific parking space or charge station  |      |                                                              |

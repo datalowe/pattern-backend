@@ -10,6 +10,7 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 use App\Models\Adm;
+use App\Models\Associate;
 use App\Models\Customer;
 
 class CustomerTest extends TestCase
@@ -47,6 +48,13 @@ class CustomerTest extends TestCase
         $validAdm->username = $this->validAdmUsername;
         $validAdm->token = $this->validAdmToken;
         $validAdm->save();
+
+        $this->validAssociateName = 'associate-name';
+        $this->validApiKey = 'associate-apikey';
+        $validAssociate = new Associate;
+        $validAssociate->client = $this->validAssociateName;
+        $validAssociate->apikey = $this->validApiKey;
+        $validAssociate->save();
     }
 
     /**
@@ -75,6 +83,76 @@ class CustomerTest extends TestCase
                             ->etc()
                     )
         );
+    }
+
+    /**
+    * GET /api/users returns 401 error response for non-authenticated client.
+    */
+    public function testCustomersNonAuth()
+    {
+        $response = $this->call(
+            'GET',
+            '/api/users',
+            [],
+            []
+        );
+
+        $response
+            ->assertStatus(401);
+    }
+
+    /**
+    * GET /api/users returns 401 error response for regular customer.
+    */
+    public function testCustomersRegularCustomer()
+    {
+        $response = $this->call(
+            'GET',
+            '/api/users',
+            [],
+            ['oauth_token' => $this->validCustomerToken4]
+        );
+
+        $response
+            ->assertStatus(401);
+    }
+
+    /**
+    * GET /api/users as associate returns all users.
+    */
+    public function testCustomersAssociate()
+    {
+        $response = $this
+            ->withHeaders(['api-key' => $this->validApiKey])
+            ->get('/api/users');
+
+        $response
+            ->assertStatus(200);
+
+        $response
+            ->assertJson(fn (AssertableJson $json) => 
+                $json
+                    ->has(5)
+                    ->has(3, fn ($json) =>
+                        $json
+                            ->where('id', 4)
+                            ->where('username', $this->validCustomerUsername4)
+                            ->etc()
+                    )
+        );
+    }
+
+    /**
+    * GET /api/users returns 401 error response for client with invalid associate api key.
+    */
+    public function testCustomersFalseAssociate()
+    {
+        $response = $this
+            ->withHeaders(['api-key' => 'invalid-api-key'])
+            ->get('/api/users');
+
+        $response
+            ->assertStatus(401);
     }
 
     /**
@@ -107,7 +185,54 @@ class CustomerTest extends TestCase
     }
 
     /**
-    * GET /api/users/{id} returns single customer's info for admin.
+    * GET /api/users/{id} returns single customer's info for that very customer.
+    */
+    public function testSingleCustomerOwner()
+    {
+        $customerId = 4;
+        $response = $this->call(
+            'GET',
+            '/api/users/' . $customerId,
+            [],
+            ['oauth_token' => $this->validCustomerToken4]
+        );
+
+        $response
+            ->assertStatus(200);
+
+        $response
+            ->assertJson(fn (AssertableJson $json) => 
+                $json
+                    ->has(1)
+                    ->first(fn ($json) =>
+                        $json
+                            ->where('id', 4)
+                            ->where('username', $this->validCustomerUsername4)
+                            ->etc()
+                    )
+        );
+    }
+
+    /**
+    * GET /api/users/{id} as customer returns 403 error response if the request {id} parameter does not match 
+    * the customer's own id.
+    */
+    public function testSingleCustomerNonowner()
+    {
+        $customerId = 5;
+        $response = $this->call(
+            'GET',
+            '/api/users/' . $customerId,
+            [],
+            ['oauth_token' => $this->validCustomerToken4]
+        );
+
+        $response
+            ->assertStatus(403);
+    }
+
+    /**
+    * GET /api/users/{id}/logs returns single customer's logs for admin.
     */
     public function testSingleCustomersLogsAdmin()
     {

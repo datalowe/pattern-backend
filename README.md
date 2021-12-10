@@ -51,21 +51,6 @@ To force image rebuilds (to make app updates be reflected in Docker containers),
 docker-compose build
 ```
 
-## Run tests
-Virtually all Laravel tests in this repo are so-called feature/integration tests and require that you've spun up the pattern-db database container (see 'Developer mode', step 1). Once you have a database container running, go to the Laravel directory and run `make install` (to ensure that you have all necessary local dependencies), then `make test`. Coverage reports are stored in 'laravel/build/coverage'. Note that all tests are continuously run through CircleCI (click the CircleCI badge at the top for details).
-
-## Update database migration files
-Note that the pattern-db submodule is the single source of truth for what the database should 'really' be like, and as mentioned above, it's created and spun up separately from Laravel. However, it's useful to have Laravel database migration files for enabling database setup when testing. To this end, the [Laravel Migrations Generator](https://github.com/kitloong/laravel-migrations-generator) package is used to generate migrations files _based on the already existing MySQL (pattern-db) database_.
-
-If pattern-db is updated in a manner which makes the migrations files outdated, follow these steps to update them:
-
-1. Delete all Laravel migrations files from 'laravel/database/migrations'.
-2. If there isn't already one running, start a MySQL container according to the instructions in 'pattern-db/README.md'.
-3. `cd` into the 'laravel' directory.
-4. Run `php artisan migrate:generate`.
-
-You should now see that new files have been generated in 'laravel/database/migrations'.
-
 ## Rest API Details
 The following routes are used for this project:
 
@@ -93,6 +78,38 @@ The following routes are used for this project:
 | /auth/github/check-usertype | Checks if user is logged in with OAuth, and if so, as admin or customer |      |                                                              |
 
 </div>
+
+An example request might look like: `(GET) http://localhost:8000/api/auth/github/redirect`.
+
+### Authentication and authorization
+The 'api/auth/' routes are accessible to anyone. The remaining routes require that one is authenticated. There are
+three types of authentication:
+
+* Customer: Checks 'oauth_token' cookie contents against 'customer' table in database.
+* Admin: Checks 'admin_oauth_token' cookie contents against 'adm' table in database.
+* Associate: Checks 'api-key' __header__ contents against 'apikeys' table in database.
+
+If you want to make a request as an associate, you can for instance make a GET request to `http://localhost:8000/api/scooters` with header `api-key: 3676397924422645` (this is one of the default api keys inserted by [pattern-db](https://github.com/joki20/pattern-db)).
+
+There are some additional sensical authorization rules. For instance, a customer who requests scooters (`api/scooters`) will only be shown active scooters that have >=10% battery left. A customer may not access other customer's data (`/users/{id}` with id other than their own). To ensure that you're able to request any data you might want, the safest bet is to first log in as an administrator, which grants you an 'admin_oauth_token' cookie (provided that you use one of the usernames inserted into the adm table by pattern-db, such as 'mosbth').
+
+### Scooter client endpoints
+There are also a few endpoints that are specifically for use by the [Scooter client](https://github.com/jannikarlsson/pattern-scooter). These are not expected to be accessed with any direct requests, but if you're interested, you can find them in 'laravel/routes/api.php'. They are not protected by any authentication logic, to decrease overhead during simulations. In a real project, they would of course need to be protected, but then one would probably [use UDP](https://github.com/jannikarlsson/pattern-scooter/issues/5) rather than HTTP for most scooter communication anyway.
+
+## Run tests
+Virtually all Laravel tests in this repo are so-called feature/integration tests and require that you've spun up the pattern-db database container (see 'Developer mode', step 1). Once you have a database container running, go to the Laravel directory and run `make install` (to ensure that you have all necessary local dependencies), then `make test`. Coverage reports are stored in 'laravel/build/coverage'. Note that all tests are continuously run through CircleCI and code coverage reports sent to CodeClimate (click the badges at the top for details).
+
+## Update database migration files
+Note that the pattern-db submodule is the single source of truth for what the database should 'really' be like, and as mentioned above, it's created and spun up separately from Laravel. However, it's useful to have Laravel database migration files for enabling database setup when testing. To this end, the [Laravel Migrations Generator](https://github.com/kitloong/laravel-migrations-generator) package is used to generate migrations files _based on the already existing MySQL (pattern-db) database_.
+
+If pattern-db is updated in a manner which makes the migrations files outdated, follow these steps to update them:
+
+1. Delete all Laravel migrations files from 'laravel/database/migrations'.
+2. If there isn't already one running, start a MySQL container according to the instructions in 'pattern-db/README.md'.
+3. `cd` into the 'laravel' directory.
+4. Run `php artisan migrate:generate`.
+
+You should now see that new files have been generated in 'laravel/database/migrations'.
 
 ## References
 Some of this project has been inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo, but most of all we've made use of the [official Laravel documentation](https://laravel.com/docs/8.x/readme).

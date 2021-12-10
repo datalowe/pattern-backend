@@ -20,23 +20,55 @@ use App\Http\Controllers\Sctr\StationController;
 |
 */
 
-////////// USERS //////////
-Route::get('/users', [CustomerController::class, 'getAllCustomers']);
+Route::middleware(['has.valid.token'])->group(function(){
+    ////////// USERS //////////
+    Route::get('/users', [CustomerController::class, 'getAllCustomers'])->middleware('admin.or.associate');
 
-Route::get('/users/{id}', [CustomerController::class, 'getSingleCustomer']);
+    Route::get('/users/{id}', [CustomerController::class, 'getSingleCustomer'])->middleware('admin.or.owner');
 
-Route::get('/users/{id}/logs', [CustomerController::class, 'getCustomerWithLoggs']);
+    Route::get('/users/{id}/logs', [CustomerController::class, 'getCustomerWithLoggs'])->middleware('admin.or.owner');
 
-Route::put('/users/{id}', [CustomerController::class, 'updateCustomer']);
-///////////////////////////
+    Route::put('/users/{id}', [CustomerController::class, 'updateCustomer'])->middleware('admin.or.owner');
+    ///////////////////////////
 
 
-////////// SCOOTERS //////////
-Route::get('/scooters', [ScooterController::class, 'getAllScooters']);
+    ////////// SCOOTERS //////////
+    Route::get('/scooters', [ScooterController::class, 'getAllScooters']);
 
-Route::get('/scooters/{id}', [ScooterController::class, 'getSingleScooter']);
+    Route::get('/scooters/{id}', [ScooterController::class, 'getSingleScooter']);
 
-Route::put('/scooters/{id}', [ScooterController::class, 'updateScooter']);
+    Route::put('/scooters/{id}', [ScooterController::class, 'updateScooter']);
+    
+    ////////// STATIONS //////////
+    Route::get('/stations', [StationController::class, 'getAllStations']);
+
+    Route::get('/stations/{id}', [StationController::class, 'getSingleStation']);
+
+    Route::get('/stations/{id}/scooters', [StationController::class, 'getLinkedScooters']);
+
+    //////////////////////////////
+
+
+    ////////// CITIES //////////
+    Route::get('/cities', [CityController::class, 'getAllCities']);
+
+    Route::get('/cities/{id}', [CityController::class, 'getSingleCity']);
+
+    Route::get('/cities/{id}/scooters', [CityController::class, 'getLinkedScooters']);
+
+    Route::get('/cities/{id}/stations', [CityController::class, 'getLinkedStations']);
+
+    Route::put('/cities/{id}', [CityController::class, 'updateCity'])->middleware('admin');
+    ////////////////////////////
+
+    ////////// LOGGAR //////////
+
+    Route::get('/logs', [LoggController::class, 'getAllLogs'])->middleware('admin');
+
+    ////////////////////////////
+});
+
+
 
 // routes specifically for use by scooter client/simulator //
 Route::get('/scooter-client/scooters/', [ScooterController::class, 'getAllScooters']);
@@ -46,35 +78,6 @@ Route::put('/scooter-client/scooters/{id}', [ScooterController::class, 'updateSc
 
 Route::post('/scooter-client/scooters/flush-cache', [ScooterController::class, 'syncCacheWithDatabase']);
 //////////////////////////////
-
-
-////////// STATIONS //////////
-Route::get('/stations', [StationController::class, 'getAllStations']);
-
-Route::get('/stations/{id}', [StationController::class, 'getSingleStation']);
-
-Route::get('/stations/{id}/scooters', [StationController::class, 'getLinkedScooters']);
-
-//////////////////////////////
-
-
-////////// CITIES //////////
-Route::get('/cities', [CityController::class, 'getAllCities']);
-
-Route::get('/cities/{id}', [CityController::class, 'getSingleCity']);
-
-Route::get('/cities/{id}/scooters', [CityController::class, 'getLinkedScooters']);
-
-Route::get('/cities/{id}/stations', [CityController::class, 'getLinkedStations']);
-
-Route::put('/cities/{id}', [CityController::class, 'updateCity']);
-////////////////////////////
-
-////////// LOGGAR //////////
-
-Route::get('/logs', [LoggController::class, 'getAllLogs']);
-
-////////////////////////////
 
 
 ////////// CUSTOMER OAUTH //////////
@@ -95,8 +98,6 @@ Route::get('/auth/github/redirect/admin', [OAuthController::class, 'githubRedire
 Route::get('/auth/github/callback/admin', [OAuthController::class, 'githubCallbackAdmin']);
 
 ////////////////////////////
-
-
 
 // route for checking if user is logged in with OAuth, and if so, as admin or customer
 Route::get('auth/github/check-usertype', [OAuthController::class, 'checkUserType']);

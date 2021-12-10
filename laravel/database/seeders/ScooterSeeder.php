@@ -19,7 +19,8 @@ class ScooterSeeder extends Seeder
             'city_id' => 1,
             'station_id' => 1,
             'lat_pos' => 58.3788262,
-            'lon_pos' => 13.8179737
+            'lon_pos' => 13.8179737,
+            'battery_level' => 5
         ]);
 
         Scooter::create([

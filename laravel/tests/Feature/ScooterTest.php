@@ -67,16 +67,18 @@ class ScooterTest extends TestCase
         $response
             ->assertStatus(200);
         
-        // there should only be 3 scooters, since the scooter seeder
-        // creates 4, but one of them has status 'maintenance'
+        // there should only be 2 scooters, since the scooter seeder
+        // creates 4, but one of them has status 'maintenance' and another
+        // has battery level 5% (below the 10% limit for when scooters are to
+        // be shown to customers)
         $response
             ->assertJson(fn (AssertableJson $json) => 
                 $json
-                    ->has(3)
+                    ->has(2)
                     ->first(fn ($json) =>
                         $json
-                            ->where('id', 1)
-                            ->where('city_id', 1)
+                            ->where('id', 2)
+                            ->where('city_id', 2)
                             ->etc()
                     )
         );

@@ -94,5 +94,20 @@ The following routes are used for this project:
 
 </div>
 
+An example request might look like: `(GET) http://localhost:8000/api/auth/github/redirect`.
+
+### Authentication and authorization
+The 'api/auth/' routes are accessible to anyone. The remaining routes require that one is authenticated. There are
+three types of authentication:
+
+* Customer: Checks 'oauth_token' cookie contents against 'customer' table in database.
+* Admin: Checks 'admin_oauth_token' cookie contents against 'adm' table in database.
+* Associate: Checks 'api-key' __header__ contents against 'apikeys' table in database.
+
+If you want to make a request as an associate, you can for instance make a GET request to `http://localhost:8000/api/scooters` with header `api-key: 3676397924422645` (this is one of the default api keys inserted by [pattern-db](https://github.com/joki20/pattern-db)).
+
+### Scooter client endpoints
+There are also a few endpoints that are specifically for use by the [Scooter client](https://github.com/jannikarlsson/pattern-scooter). These are not expected to be accessed with any direct requests, but if you're interested, you can find them in 'laravel/routes/api.php'. They are not protected by any authentication logic, to decrease overhead during simulations. In a real project, they would of course need to be protected, but then one would probably [use UDP](https://github.com/jannikarlsson/pattern-scooter/issues/5) rather than HTTP for most scooter communication anyway.
+
 ## References
 Some of this project has been inspired by [this guide on building REST API's with Laravel](https://www.toptal.com/laravel/restful-laravel-api-tutorial?utm_source=learninglaravel.net) by André Castelo, but most of all we've made use of the [official Laravel documentation](https://laravel.com/docs/8.x/readme).

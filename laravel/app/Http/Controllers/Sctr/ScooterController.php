@@ -25,12 +25,11 @@ class ScooterController extends Controller
 
     public function getAllScooters(Request $req)
     {
-        // NOTE NEW! Filtering based on who requested the data (customers
-        // only get active scooters) TODO ensure that correct filtering
-        // is applied for customers (more criteria needed? might be appropriate
-        // to create a custom method on Scooter class if filtering becomes complex)
+        // customers only get active scooters
         if (Customer::isCustomerReq($req)) {
-            return Scooter::where('status', 'active')->get();
+            return Scooter::where('status', 'active')
+                ->where('battery_level', '>', 10)
+                ->get();
         }
         return Scooter::all();
     }
